@@ -1,0 +1,33 @@
+# Explicitly configured $PATH
+PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+PATH="/usr/local/sbin:$PATH"
+PATH="/usr/local:$PATH"
+
+PATH="/usr/local/opt/coreutils/libexec/gnubin/:$PATH"
+MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+
+PATH="$HOME/bin:$PATH"
+
+# Go
+# GOPATH=$HOME/Code/go
+# PATH="$GOPATH/bin:$PATH"
+
+# Rust Cargo
+# PATH="$HOME/.cargo/bin:$PATH"
+
+# Composer
+# PATH="./vendor/bin:$HOME/.composer/bin:$HOME/.composer/vendor/bin:$PATH"
+
+# NodeJS
+# PATH="node_modules/.bin:$HOME/.node/bin:$PATH"
+
+# Python
+# PATH="$HOME/Library/Python/2.7/bin/:$PATH"
+
+export PATH
+export MANPATH
+
+# The next line updates PATH for the Google Cloud SDK.
+# if [ -f '/Users/ibrahim/Tools/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/ibrahim/Tools/google-cloud-sdk/path.zsh.inc'; fi
+

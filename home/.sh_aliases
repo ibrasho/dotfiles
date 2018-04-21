@@ -1,0 +1,82 @@
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+
+# Enable aliases to be sudo’ed
+alias sudo="sudo "
+
+alias dc="docker-compose"
+alias ku="kubectl"
+alias kp="kube-prompt"
+
+# Shortcuts
+alias g="git"
+alias vi="vim"
+alias rm="trash"
+
+# mv, rm, cp, gunzip
+alias mv='mv -v'
+alias rm='rm -i -v'
+alias cp='cp -v'
+
+# Be nice
+alias htop='sudo htop'
+alias hosts='sudo $EDITOR /etc/hosts'   # yes I occasionally 127.0.0.1 twitter.com ;)
+
+#
+# Time to upgrade `ls`
+
+# Use coreutils `ls` if possible
+hash gls >/dev/null 2>&1 || alias gls="ls"
+
+# Always use color output for `ls`
+# Detect which `ls` flavor is in use
+if gls --color > /dev/null 2>&1; then # GNU `ls`
+  colorflag="--color"
+else # OS X `ls`
+  colorflag="-G"
+fi
+
+export CLICOLOR_FORCE=1
+
+# ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
+alias ls='ls -AFh ${colorflag}'
+
+# IP addresses
+alias localip="ipconfig getifaddr en1"
+alias myip="ifconfig | grep 'inet ' | grep -v 127.0.0.1 | awk '{print \$2}'"
+
+# Copy my public key to the pasteboard
+alias pubkey="more $HOME/.ssh/ibrasho.pub | pbcopy | printf '=> Public key copied to pasteboard.\n'"
+
+# Flush DNS cache
+alias flushdns="dscacheutil -flushcache"
+
+# Git aliases
+# More Git tips http://firstaidgit.io/
+alias gp="git push origin HEAD"
+alias gs='git status'
+alias gd='git diff'
+alias gco='git checkout'
+
+# View HTTP traffic
+alias sniff="sudo ngrep -W byline -d 'en0' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en0 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+
+# Disc utils
+alias diskspace_report="df -P -kHl"
+alias free_diskspace_report="diskspace_report"
+
+# File size
+alias fs="stat -f \"%z bytes\""
+# Empty the Trash on all mounted volumes and the main HDD.
+# Also, clear Apple’s System Logs & the useless sleepimage to improve shell startup speed
+alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo grm -rf $HOME/.Trash; sudo rm -rtv /private/var/log/asl/*.asl; sudo rm /private/var/vm/sleepimage"
+
+# zshrc config
+alias zshrc="${EDITOR} ${$(cd -P $(dirname $0) && cd ..; pwd -P)}"
+alias reload="source $HOME/.zshrc && echo 'Shell config reloaded from $HOME/.zshrc'"
+
+# zsh.local config
+alias localrc="if [ -a $HOME/.zsh.local ]; then ${EDITOR} $HOME/.zsh.local; fi"

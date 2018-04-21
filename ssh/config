@@ -1,0 +1,10 @@
+Host *
+	User ibrasho
+	AddKeysToAgent yes
+	IdentityFile ~/.ssh/ibrasho
+	ForwardAgent yes
+
+Host github.com
+	Hostname ssh.github.com
+	User git
+	Port 443
