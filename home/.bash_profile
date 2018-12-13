@@ -1,4 +1,3 @@
-
 #  ---------------------------------------------------------------------------
 #
 #  Description:  This file holds all my BASH configurations and aliases
@@ -20,8 +19,8 @@ if [ -f `brew --prefix`/etc/bash_completion ]; then
   . `brew --prefix`/etc/bash_completion
 fi
 
-if [ -f $HOME/.bash_aliases ]; then
-  . $HOME/.bash_aliases
+if [ -f $HOME/.sh_aliases ]; then
+  . $HOME/.sh_aliases
 fi
 
 # Git branch in prompt.
@@ -53,9 +52,6 @@ done;
 unset file;
 
 
-
-
-
 #   Set Default Editor (change 'Nano' to the editor of your choice)
 #   ------------------------------------------------------------
   export EDITOR=/usr/bin/vi
@@ -71,4 +67,5 @@ unset file;
 #   ------------------------------------------------------------
   export CLICOLOR=1
   export LSCOLORS=GxFxCxDxBxegedabagaced
+
 

@@ -1,4 +1,4 @@
-DEFAULT_USER="ibrahim"
+DEFAULT_USER="ibrasho"
 
 ZSH_THEME="powerlevel9k/powerlevel9k"
 
@@ -19,5 +19,9 @@ zsh_wifi_signal() {
 
 POWERLEVEL9K_CUSTOM_WIFI_SIGNAL="zsh_wifi_signal"
 
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir_writable dir vcs)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir_writable dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status custom_wifi_signal background_jobs battery time)
+
+POWERLEVEL9K_DIR_DEFAULT_BACKGROUND='12'
+POWERLEVEL9K_DIR_HOME_BACKGROUND='12'
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='12'

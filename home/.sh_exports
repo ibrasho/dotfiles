@@ -7,11 +7,7 @@ export HISTSIZE=10000
 export SAVEHIST=10000
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='vim'
-fi
+export EDITOR='vim'
 
 # Prefer US English and use UTF-8
 export LC_ALL="en_US.UTF-8"
@@ -20,11 +16,12 @@ export LANG="en_US.UTF-8"
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
 
-export GPG_TTY=$(tty)
+# GPG
+# eval $(gpg-agent --daemon)
+# export GPG_TTY=$(tty)
 
 # SSH
 export SSH_KEY_PATH="$HOME/.ssh/ibrasho"
-export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
@@ -63,4 +60,10 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 # here's LS_COLORS
 # github.com/trapd00r/LS_COLORS
 command -v gdircolors >/dev/null 2>&1 || alias gdircolors="dircolors"
-eval "$(gdircolors -b $HOME/.dotfiles/dircolors)"
+eval "$(gdircolors -b $HOME/Tools/dircolors/dircolors.256dark)"
+
+export GOPATH=$HOME/Code/go
+
+export BASH_ENV='~/.bashenv'
+
+export NVM_DIR="$HOME/.nvm"

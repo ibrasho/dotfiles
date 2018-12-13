@@ -5,6 +5,7 @@ set -e
 
 # Get the dotfiles directory's absolute path
 export DOTFILES="$HOME/.dotfiles"
+mkdir -p "$HOME/Tools"
 
 source "$DOTFILES/utils.sh"
 
@@ -101,7 +102,7 @@ print_info "Updating crontab"
 crontab -l > /tmp/mycron
 
 # Echo new cron into cron file
-for cmd in online_check.sh battery_check.py; do
+for cmd in online_check battery_check.py; do
   cron="* * * * * $HOME/bin/$cmd &> /dev/null"
   grep -q "$cron" /tmp/mycron
   if [ $? -eq 1 ]; then
@@ -124,9 +125,9 @@ rm /tmp/mycron
 # or use autojump instead https://github.com/wting/autojump
 
 print_info "Installing z"
-if [ ! -d "$DOTFILES/z" ]; then
-  git clone "https://github.com/rupa/z.git" "$DOTFILES/z"
-  chmod +x "$DOTFILES/z/z.sh"
+if [ ! -d "$HOME/Tools/z" ]; then
+  git clone "https://github.com/rupa/z.git" "$HOME/Tools/z"
+  chmod +x "$HOME/Tools/z/z.sh"
   print_success "Installed z"
 fi
 
@@ -136,9 +137,8 @@ fi
 ###############################################################################
 
 print_info "Installing dircolors"
-if [ ! -d "$DOTFILES/dircolors" ]; then
-  mkdir -p "$DOTFILES/dircolors"
-  git clone "https://github.com/gibbling666/dircolors.git" "$DOTFILES/dircolors"
+if [ ! -d "$HOME/Tools/dircolors" ]; then
+  git clone "https://github.com/gibbling666/dircolors.git" "$HOME/Tools/dircolors"
   print_success "Installed dircolors"
 fi
 

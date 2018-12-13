@@ -10,6 +10,7 @@ apps=(
     caskroom/fonts/font-fira-code
     caskroom/fonts/font-robotomono-nerd-font
 
+    tunnelblick
     1password
     docker
     authy-desktop
@@ -20,6 +21,7 @@ apps=(
     authy
     flux
     firefox
+    bestres
     spotify
     slack
     jetbrains-toolbox

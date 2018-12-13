@@ -23,12 +23,14 @@ brew update
 brew upgrade --all
 
 apps=(
+  openssl
   bash-completion2
   coreutils
   moreutils
   findutils
   cloudflare/cloudflare/cloudflared
-  git
+  "curl --with-openssl"
+  "git --with-openssl --with-curl"
   "gnu-sed --with-default-names"
   "grep --with-default-names"
   grep
@@ -38,14 +40,13 @@ apps=(
   source-highlight
   tree
   "ffmpeg --with-libvpx"
+  tmux
   wget
   node
   go
-  python
-  protobuf
-  ansible
   gpg
   gpg-agent
+  mas					# Mac App Store CLI
   pinentry-mac
 )
 

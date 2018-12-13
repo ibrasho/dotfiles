@@ -1,1 +1,76 @@
 alias diff-so-fancy="docker run diff-so-fancy"
+
+# rm() {
+#     echo "docker run -v $1:/rootfs/$1 trash /rootfs/$1"
+# }
+
+geth() {
+    local IMAGE="ethereum/client-go:alltools-stable"
+
+    docker run -it \
+        -p 8545:8545 \
+        -p 30303:30303 \
+        -v $HOME:/userhome \
+        -v $HOME/Library/Ethereum/:/root/.ethereum \
+        -v $HOME/.ethash:/root/.ethash \
+        --entrypoint sh \
+        $IMAGE
+}
+
+kl() {
+    local IMAGE="gcr.io/google_containers/hyperkube:v1.10.0"
+
+    docker run -it \
+        -p 8001:8001 \
+        -v $HOME/.kube:/root/.kube \
+        $IMAGE \
+        kubectl $@
+}
+
+certbot() {
+    local IMAGE="certbot/certbot"
+
+    docker run -it \
+        -v $HOME/.letsecrypt:/etc/letsencrypt \
+        -v $PWD/letsencrypt:/var/lib/letsencrypt \
+        -v $PWD/log:/var/log/letsencrypt \
+        $IMAGE \
+        $@
+}
+
+dnsmasq() {
+    local IMAGE="andyshinn/dnsmasq:2.76"
+
+    docker run -d \
+        --cap-add=NET_ADMIN  \
+        -p 53:53/tcp \
+        -p 53:53/udp \
+        -p 5380:8080 \
+        -v $HOME/.dnsmasq.conf:/etc/dnsmasq.conf \
+        --restart always \
+        $IMAGE
+}
+
+traefik() {
+    local IMAGE="traefik:1.6"
+
+    docker network create traefik || true
+    docker stop traefik || true
+    docker rm traefik || true
+
+    docker run -d \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -p 80:80 \
+        -p 443:443 \
+        --network traefik \
+        -l traefik.frontend.rule=Host:traefik.docker.localhost \
+        -l traefik.port=8080 \
+        --restart always \
+        --name traefik \
+        $IMAGE \
+            -c /dev/null --api --logLevel=INFO \
+            --docker --docker.watch --docker.domain=docker.localhost \
+            --entryPoints='Name:https Address::443 TLS' \
+            --entryPoints='Name:http Address::80' \
+            --defaultentrypoints=http,https
+}
