@@ -2,14 +2,12 @@
 
 # Install Caskroom
 brew tap caskroom/cask
-brew install brew-cask
 brew tap caskroom/versions
 
 # Install packages
 apps=(
   1password
   authy
-  authy-desktop
   bestres
   docker
   dropbox
@@ -39,7 +37,6 @@ brew cask install "${apps[@]}"
 # Quick Look Plugins (https://github.com/sindresorhus/quick-look-plugins)
 qlplugins=(
   qlcolorcode
-  qlimagesize
   qlmarkdown
   qlprettypatch
   qlstephen
