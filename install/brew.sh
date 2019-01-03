@@ -27,17 +27,11 @@ apps=(
   moreutils
   findutils
   cloudflare/cloudflare/cloudflared
-  curl --with-openssl
-  git --with-openssl --with-curl
-  gnu-sed --with-default-names
-  grep --with-default-names
   grep
   openssh
   mtr
-  imagemagick --with-webp
   source-highlight
   tree
-  ffmpeg --with-libvpx
   tmux
   wget
   node
@@ -49,6 +43,13 @@ apps=(
 )
 
 brew install "${apps[@]}"
+
+brew install curl --with-openssl
+brew install git --with-openssl --with-curl
+brew install gnu-sed --with-default-names
+brew install grep --with-default-names
+brew install imagemagick --with-webp
+brew install ffmpeg --with-libvpx
 
 # Remove outdated versions from the cellar
 brew cleanup
