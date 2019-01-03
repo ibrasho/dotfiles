@@ -33,6 +33,7 @@ apps=(
   tmux
   wget
 
+  autojump
   gpg
   gnupg
   pinentry-mac

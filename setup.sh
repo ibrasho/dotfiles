@@ -117,22 +117,6 @@ rm /tmp/mycron
 
 
 ###############################################################################
-# Z                                                                           #
-###############################################################################
-
-# github.com/rupa/z - hooked up in .zshrc
-# consider reusing your current .z file if possible. it's painful to rebuild :)
-# or use autojump instead https://github.com/wting/autojump
-
-print_info "Installing z"
-if [ ! -d "$HOME/Tools/z" ]; then
-  git clone "https://github.com/rupa/z.git" "$HOME/Tools/z"
-  chmod +x "$HOME/Tools/z/z.sh"
-  print_success "Installed z"
-fi
-
-
-###############################################################################
 # dircolors                                                                   #
 ###############################################################################
 
@@ -151,12 +135,12 @@ fi
 # source "$DOTFILES/install/npm.sh"
 
 # print_info "Installing brew packages"
-# source "$DOTFILES/install/brew.sh"
+source "$DOTFILES/install/brew.sh"
 
-# if [ "$(uname)" == "Darwin" ]; then
-#     print_info "Installing brew casks"
-#     source "$DOTFILES/install/brew-cask.sh"
-# fi
+if [ "$(uname)" == "Darwin" ]; then
+    print_info "Installing brew casks"
+    source "$DOTFILES/install/brew-cask.sh"
+fi
 
 
 ###############################################################################
