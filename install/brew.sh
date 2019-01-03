@@ -20,26 +20,43 @@ brew update
 brew upgrade --all
 
 apps=(
-  openssl
+  zsh
+
   bash-completion2
   zsh-completions
+
   coreutils
   moreutils
   findutils
-  cloudflare/cloudflare/cloudflared
-  grep
+  openssl
   openssh
-  mtr
-  source-highlight
+  grep
   tree
   tmux
   wget
-  node
-  go
+
   gpg
   gnupg
-  mas					# Mac App Store CLI
   pinentry-mac
+
+  cloudflare/cloudflare/cloudflared
+  jq
+  source-highlight
+  mas					# Mac App Store CLI
+
+  bazel
+
+  go
+  nvm
+  rbenv
+
+  azure-cli
+  aws-shell
+  terraform
+
+  kubernetes-cli
+  kubernetes-helm
+  kubectx
 )
 
 brew install "${apps[@]}"
