@@ -33,10 +33,11 @@ apps=(
   tmux
   wget
 
+  go
+
   autojump
   gpg
   gnupg
-  pinentry-mac
 
   cloudflare/cloudflare/cloudflared
   jq
@@ -56,6 +57,7 @@ apps=(
   kubernetes-cli
   kubernetes-helm
   kubectx
+  direnv
 )
 
 brew install "${apps[@]}"

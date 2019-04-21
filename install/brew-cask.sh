@@ -8,12 +8,11 @@ brew tap caskroom/versions
 apps=(
   1password
   authy
-  bestres
+  alfred
   docker
   dropbox
   electrum
   firefox
-  flux
   caskroom/fonts/font-fira-code
   caskroom/fonts/font-firacode-nerd-font
   caskroom/fonts/font-robotomono-nerd-font
@@ -25,11 +24,13 @@ apps=(
   keybase
   microsoft-office
   minikube
+  postman
   paw
   slack
   spotify
   tunnelblick
   visual-studio-code
+  whatsapp
 )
 
 brew cask install "${apps[@]}"

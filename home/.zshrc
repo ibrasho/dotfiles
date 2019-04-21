@@ -41,4 +41,5 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 . "/usr/local/opt/nvm/nvm.sh"
 
 # The next line enables shell command completion for gcloud.
-. $HOME/Tools/google-cloud-sdk/completion.zsh.inc
+. /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc
+
