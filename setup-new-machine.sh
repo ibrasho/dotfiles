@@ -58,11 +58,11 @@ if ! xcode-select --print-path &> /dev/null; then
 fi
 
 ###############################################################################
-# OSX defaults                                                                #
+# macOS defaults                                                              #
 # https://github.com/hjuutilainen/dotfiles/blob/master/bin/osx-user-defaults.sh
 ###############################################################################
 
-. osx/set-defaults.sh
+. ./macos/set-defaults.sh
 
 
 ###############################################################################

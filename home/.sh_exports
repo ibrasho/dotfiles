@@ -67,3 +67,4 @@ export GOPATH=$HOME/Code/go
 export BASH_ENV='~/.bashenv'
 
 export NVM_DIR="$HOME/.nvm"
+

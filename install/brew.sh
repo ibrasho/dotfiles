@@ -15,7 +15,7 @@ brew tap Goles/battery
 brew update
 
 # Upgrade any already-installed formulae
-brew upgrade --all
+brew upgrade
 
 apps=(
   zsh
@@ -62,12 +62,12 @@ apps=(
 
 brew install "${apps[@]}"
 
-brew install curl --with-openssl
-brew install git --with-openssl --with-curl
-brew install gnu-sed --with-default-names
-brew install grep --with-default-names
-brew install imagemagick --with-webp
-brew install ffmpeg --with-libvpx
+brew install curl
+brew install git
+brew install gnu-sed
+brew install grep
+brew install imagemagick
+brew install ffmpeg
 
 # Remove outdated versions from the cellar
 brew cleanup

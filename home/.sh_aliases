@@ -85,3 +85,5 @@ alias reload="source $HOME/.zshrc && echo 'Shell config reloaded from $HOME/.zsh
 alias localrc="if [ -a $HOME/.zsh.local ]; then ${EDITOR} $HOME/.zsh.local; fi"
 
 alias docs="code ~/Dropbox/Documents"
+
+alias gam="~/bin/gam/gam"

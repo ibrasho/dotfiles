@@ -1,3 +1,3 @@
-shopt -s expand_aliases
+# shopt -s expand_aliases
 
-source .bashrc
+# source .bashrc

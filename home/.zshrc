@@ -18,28 +18,10 @@ unsetopt RM_STAR_SILENT
 # Source local extra (private) settings specific to machine if it exists
 [ -f $HOME/.zsh.local ] && source $HOME/.zsh.local
 
-# Load the shell dotfiles
-local SHELL_DOTFILES=(
-  .sh_config
-  .sh_exports
-  .sh_path
-  .sh_functions
-  .sh_aliases
-  .sh_aliases_docker
-  .sh_aliases_kubectl
-)
-for file in ${SHELL_DOTFILES[@]}; do
-  [ -r "$HOME/$file" ] && [ -f "$HOME/$file" ] && source "$HOME/$file"
-done
+# Load the generic shell profile
+[ -f $HOME/.profile ] && source $HOME/.profile
 
 eval "$(direnv hook zsh)"
 
-# Z beats cd most of the time
-source $HOME/Tools/z/z.sh
-
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-. "/usr/local/opt/nvm/nvm.sh"
-
 # The next line enables shell command completion for gcloud.
 . /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc
-

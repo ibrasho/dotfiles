@@ -199,7 +199,6 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel9k" ]; then
   git clone "https://github.com/bhilburn/powerlevel9k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
 fi
 
-echo ""
 
 ###############################################################################
 # Reload zsh settings                                                         #

@@ -19,10 +19,6 @@ if [ -f `brew --prefix`/etc/bash_completion ]; then
   . `brew --prefix`/etc/bash_completion
 fi
 
-if [ -f $HOME/.sh_aliases ]; then
-  . $HOME/.sh_aliases
-fi
-
 # Git branch in prompt.
 
 parse_git_branch() {
@@ -41,16 +37,9 @@ parse_git_branch() {
 
 
 # Load the shell dotfiles, and then some:
-# * $HOME/.path can be used to extend `$PATH`.
-# * $HOME/.extra can be used for other settings you don’t want to commit.
 
+source $HOME/.profile
 source $HOME/.bash_prompt
-
-for file in $HOME/.{bash_prompt}; do
-  [ -r "$file" ] && [ -f "$file" ] && source "$file";
-done;
-unset file;
-
 
 #   Set Default Editor (change 'Nano' to the editor of your choice)
 #   ------------------------------------------------------------
