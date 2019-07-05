@@ -24,4 +24,4 @@ unsetopt RM_STAR_SILENT
 eval "$(direnv hook zsh)"
 
 # The next line enables shell command completion for gcloud.
-. /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc
+source $HOME/Tools/google-cloud-sdk/completion.zsh.inc

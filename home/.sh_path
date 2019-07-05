@@ -36,4 +36,7 @@ PATH="/anaconda3/bin:$PATH"
 # Google Cloud SDK.
 PATH="$HOME/Tools/google-cloud-sdk/bin/:$PATH"
 
+# Flutter
+PATH="$HOME/Code/flutter/bin:$HOME/Code/flutter/bin/cache/dart-sdk/bin:$HOME/Code/flutter/.pub-cache/bin:$PATH"
+
 export PATH MANPATH
