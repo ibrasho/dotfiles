@@ -38,6 +38,9 @@ Note: Use `~/.gitconfig.local` to store local information such as the git user c
 	email = me@ibrasho.com
 	signingkey = AFC7F89347816D1EEE861BAFF58AD061F51F40FC
 
+[commit]
+  gpgsign = true
+
 [http]
 	cookiefile = /Users/ibrasho/.gitcookies
 

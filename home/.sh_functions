@@ -5,4 +5,4 @@ camerausedby() {
   echo -e "Recent camera uses:\n$usedby"
 }
 
-function kubectl() { echo "+ kubectl $@"; command kubectl $@; }
+function kubectl() { >&2 echo "+ kubectl $@"; command kubectl $@; }

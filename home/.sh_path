@@ -1,13 +1,13 @@
 # Explicitly configured $PATH
-PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
 
-PATH="/usr/local/sbin:$PATH"
-PATH="/usr/local:$PATH"
-
-PATH="/usr/local/opt/coreutils/libexec/gnubin/:$PATH"
+PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
 MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
 PATH="$HOME/bin:$PATH"
+
+# Java
+PATH="/usr/local/opt/openjdk/bin:$PATH"
 
 # Go
 PATH="$GOPATH/bin:$PATH"
@@ -16,24 +16,33 @@ PATH="$GOPATH/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"
 
 # Composer
-# PATH="./vendor/bin:$HOME/.composer/bin:$HOME/.composer/vendor/bin:$PATH"
+PATH="./vendor/bin:$HOME/.composer/bin:$HOME/.composer/vendor/bin:$PATH"
 
 # NodeJS
 PATH="node_modules/.bin:$HOME/.node/bin:$PATH"
 
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+
 # Python
 # PATH="$HOME/Library/Python/2.7/bin/:$PATH"
+PATH="$HOME/Library/Python/3.8/bin:$PATH"
+PATH="$PYENV_ROOT/bin:$PATH"
 
 # Android
 # PATH="/Development/android-sdk/platform-tools:/Development/android-sdk/tools:$PATH"
+PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
 
 # Composer
 PATH="vendor/bin:$HOME/.composer/vendor/bin:$PATH"
 
-# added by Anaconda3 5.2.0 installer
-PATH="/anaconda3/bin:$PATH"
+# Flutter
+PATH="$HOME/Code/flutter/bin:$PATH"
 
-# Google Cloud SDK.
-PATH="$HOME/Tools/google-cloud-sdk/bin/:$PATH"
+# Krew
+PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+GOPROXY=https://proxy.golang.org
 
 export PATH MANPATH
+

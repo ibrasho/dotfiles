@@ -16,18 +16,18 @@
 	# Branch
 	br = branch
 	branch-name = rev-parse --abbrev-ref HEAD
-	branch-diff = diff master...HEAD
-	branch-files = "!git diff master...HEAD --name-status | sed '/^D/d ; s/^.\\s\\+//'"
+	branch-diff = diff main...HEAD
+	branch-files = "!git diff main...HEAD --name-status | sed '/^D/d ; s/^.\\s\\+//'"
 
 	# Commit
-	c = commit -s
-	ca = commit -as
-	ci = commit -s
-	cal = !git add -A && git commit -s              # Commit all changes
-	cam = commit -asm
-	cne = commit --no-edit -s
-	amend = commit -s --amend
-	amend-all = !git add --all && git commit -s --amend --reuse-message=HEAD
+	c = commit
+	ca = commit -a
+	ci = commit
+	cal = !git add -A && git commit               # Commit all changes
+	cam = commit -am
+	cne = commit --no-edit
+	amend = commit --amend --no-edit
+	amend-all = !git add --all && git commit --amend --reuse-message=HEAD
 
 	unstage = reset
 	uncommit = reset --soft HEAD^
@@ -54,18 +54,21 @@
 
 	# Pull
 	pl = pull
-	plom = pull origin master
-	plum = pull upstream master
-	preb = !git fetch upstream && git rebase upstream/master
+	plom = pull origin main
+	plum = pull upstream main
+	preb = !git fetch upstream && git rebase upstream/main
 
 	# Push
 	p = push
-	pom = push origin master
+        pf = push --force-with-lease
+	pom = push origin main
 	poh = push origin head
 
 	# Stash
 	st = stash
 	stp = stash pop
+
+	spsp = !git stash && git pull && git stash pop
 
 	# Status/Logging
 	s = status
@@ -215,22 +218,23 @@
 [include]
 	path = ~/.gitconfig.local
 
-[filter "lfs"]
-	clean = git lfs clean %f
-	smudge = git lfs smudge %f
-	required = true
-
 [fetch]
 	prune = true
-
-[commit]
-	gpgsign = true
 
 [gpg]
 	program = /usr/local/bin/gpg
 
 [tag]
-	forceSignAnnotated = true
+	# forceSignAnnotated = true
 
 [pull]
 	rebase = true
+
+[commit]
+	# gpgsign = true
+
+[diff]
+	noprefix = true
+
+[init]
+	defaultBranch = main

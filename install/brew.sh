@@ -10,6 +10,7 @@ if test ! $(which brew); then
 fi
 
 brew tap Goles/battery
+brew tap homebrew/command-not-found
 
 # Make sure we’re using the latest Homebrew
 brew update
@@ -18,7 +19,13 @@ brew update
 brew upgrade
 
 apps=(
+  fish
   zsh
+
+  fzf
+  starship
+  terminal-notifier
+  thefuck
 
   bash-completion2
   zsh-completions
@@ -35,7 +42,6 @@ apps=(
 
   go
 
-  autojump
   gpg
   gnupg
 
@@ -58,16 +64,19 @@ apps=(
   kubernetes-helm
   kubectx
   direnv
+
+  libyaml
+  libffi
+
+  curl
+  git
+  gnu-sed
+  grep
+  imagemagick
+  ffmpeg
 )
 
 brew install "${apps[@]}"
-
-brew install curl
-brew install git
-brew install gnu-sed
-brew install grep
-brew install imagemagick
-brew install ffmpeg
 
 # Remove outdated versions from the cellar
 brew cleanup

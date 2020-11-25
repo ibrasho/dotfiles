@@ -8,6 +8,8 @@
 alias sudo="sudo "
 
 alias dc="docker-compose"
+alias dce="docker-compose exec"
+
 alias ku="kubectl"
 alias kp="kube-prompt"
 
@@ -55,7 +57,7 @@ alias flushdns="dscacheutil -flushcache"
 
 # Git aliases
 # More Git tips http://firstaidgit.io/
-alias gp="git push origin HEAD"
+alias gp="git push -u origin HEAD"
 alias ga="git add"
 alias gs='git status'
 alias gd='git diff'
@@ -77,13 +79,6 @@ alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo grm -rf $HOME/.Trash; s
 
 # zshrc config
 if [[ $SHELL == '/usr/local/bin/zsh' ]]; then
-	alias zshrc="${EDITOR} $HOME/.zshrc)"
+	alias zshrc="${EDITOR} $HOME/.zshrc"
 fi
 alias reload="source $HOME/.zshrc && echo 'Shell config reloaded from $HOME/.zshrc'"
-
-# zsh.local config
-alias localrc="if [ -a $HOME/.zsh.local ]; then ${EDITOR} $HOME/.zsh.local; fi"
-
-alias docs="code ~/Dropbox/Documents"
-
-alias gam="~/bin/gam/gam"

@@ -9,6 +9,7 @@ apps=(
   1password
   authy
   alfred
+  contexts
   docker
   dropbox
   electrum

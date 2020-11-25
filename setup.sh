@@ -40,7 +40,7 @@ print_info "Changing to the $DOTFILES directory..."
 # Actual symlink stuff
 print_info "Creating symlinks"
 
-for file in $(ls -a $DOTFILES/home); do
+for file in $(ls -a $DOTFILES/home | grep -v /); do
   SOURCE_FILE="${DOTFILES}/home/$file"
   TARGET_FILE="$HOME/$file"
 
@@ -48,6 +48,7 @@ for file in $(ls -a $DOTFILES/home); do
     safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$DOTFILES_BACKUP"
   fi
 done
+
 
 if [ ! -d "$HOME/.ssh" ]; then
   mkdir -p "$HOME/.ssh"
@@ -63,7 +64,6 @@ if [ ! -d "$HOME/.gnupg" ]; then
   chmod 700 "$HOME/.gnupg"
 fi
 
-
 for file in $(ls $DOTFILES/gnupg); do
   SOURCE_FILE="${DOTFILES}/gnupg/$file"
   TARGET_FILE="$HOME/.gnupg/$file"
@@ -72,8 +72,16 @@ for file in $(ls $DOTFILES/gnupg); do
 done
 
 
-safeSymlink "$DOTFILES/gnupg/gpg.conf" "$HOME/.gnupg/gpg.conf" "$DOTFILES_BACKUP"
-safeSymlink "$DOTFILES/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf" "$DOTFILES_BACKUP"
+if [ ! -d "$HOME/.config" ]; then
+  mkdir -p "$HOME/.config"
+  chmod 700 "$HOME/.config"
+fi
+
+safeSymlink "$DOTFILES/config/fish" "$HOME/.config/fish" "$DOTFILES_BACKUP"
+
+safeSymlink "$DOTFILES/config/powerline" "$HOME/.config/powerline" "$DOTFILES_BACKUP"
+
+safeSymlink "$DOTFILES/config/starship.toml" "$HOME/.config/starship.toml" "$DOTFILES_BACKUP"
 
 
 # Copy scripts
@@ -131,9 +139,6 @@ fi
 # Package managers & packages                                                 #
 ###############################################################################
 
-# print_info "Installing npm packages"
-# source "$DOTFILES/install/npm.sh"
-
 # print_info "Installing brew packages"
 source "$DOTFILES/install/brew.sh"
 
@@ -141,6 +146,12 @@ if [ "$(uname)" == "Darwin" ]; then
     print_info "Installing brew casks"
     source "$DOTFILES/install/brew-cask.sh"
 fi
+
+# print_info "Installing npm packages"
+# source "$DOTFILES/install/npm.sh"
+
+# print_info "Installing pip packages"
+source "$DOTFILES/install/pip.sh"
 
 
 ###############################################################################
@@ -187,21 +198,29 @@ fi
 
 
 ###############################################################################
+# Fish                                                                         #
+###############################################################################
+
+grep -q -F "$(which fish)" /etc/shells || sudo sh -c "echo $(which fish) >> /etc/shells"
+
+# Set the default shell to zsh if it isn't currently set to zsh
+if [ "$SHELL" != "$(which fish)" ]; then
+  chsh -s $(which fish)
+fi
+
+###############################################################################
 # Zsh                                                                         #
 ###############################################################################
 
-source "$DOTFILES/install/zsh.sh"
+# source "$DOTFILES/install/zsh.sh"
 
-# Install Zsh settings
-mkdir -p "$HOME/.oh-my-zsh/custom/themes"
+# # Install Zsh settings
+# mkdir -p "$HOME/.oh-my-zsh/custom/themes"
 
-if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel9k" ]; then
-  git clone "https://github.com/bhilburn/powerlevel9k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
-fi
+# if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel9k" ]; then
+#   git clone "https://github.com/bhilburn/powerlevel9k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
+# fi
 
 
-###############################################################################
-# Reload zsh settings                                                         #
-###############################################################################
-
-zsh
+# # Reload zsh settings                                                         #
+# zsh
