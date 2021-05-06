@@ -20,7 +20,6 @@ brew upgrade
 
 apps=(
   fish
-  zsh
 
   fzf
   starship
@@ -28,8 +27,10 @@ apps=(
   thefuck
 
   bash-completion2
-  zsh-completions
 
+  curl
+  git
+  gnu-sed
   coreutils
   moreutils
   findutils
@@ -39,39 +40,32 @@ apps=(
   tree
   tmux
   wget
-
+  diff-so-fancy
+  
   go
+  java
 
   gpg
   gnupg
+  jq
 
   cloudflare/cloudflare/cloudflared
-  jq
   source-highlight
-  mas					# Mac App Store CLI
-
-  bazel
+  
+  mas # Mac App Store CLI
 
   go
   nvm
   rbenv
 
-  azure-cli
   aws-shell
   terraform
 
-  kubernetes-cli
-  kubernetes-helm
-  kubectx
   direnv
 
   libyaml
   libffi
-
-  curl
-  git
-  gnu-sed
-  grep
+  
   imagemagick
   ffmpeg
 )

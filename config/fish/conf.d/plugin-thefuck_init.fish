@@ -1,4 +1,4 @@
-if type -q thefuck
+if type -q /usr/local/bin/thefuck || type -q /opt/homebrew/bin/thefuck
   set -q __tf_func; or __tf_updt
   eval $__tf_func
 else

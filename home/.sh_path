@@ -1,7 +1,11 @@
+BREW_PREFIX=$(brew --prefix)
+
 # Explicitly configured $PATH
 PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
 
+PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$PATH"
 PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+
 MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 
 PATH="$HOME/bin:$PATH"
@@ -11,9 +15,6 @@ PATH="/usr/local/opt/openjdk/bin:$PATH"
 
 # Go
 PATH="$GOPATH/bin:$PATH"
-
-# Rust Cargo
-PATH="$HOME/.cargo/bin:$PATH"
 
 # Composer
 PATH="./vendor/bin:$HOME/.composer/bin:$HOME/.composer/vendor/bin:$PATH"

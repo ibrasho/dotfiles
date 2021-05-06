@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+# export ZSH=$HOME/.oh-my-zsh
 
 export TERM="xterm-256color"
 
@@ -11,7 +11,7 @@ export TERM="xterm-256color"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=()
 
-source $ZSH/oh-my-zsh.sh
+# source $ZSH/oh-my-zsh.sh
 
 unsetopt RM_STAR_SILENT
 
@@ -21,7 +21,7 @@ unsetopt RM_STAR_SILENT
 # Load the generic shell profile
 [ -f $HOME/.profile ] && source $HOME/.profile
 
-eval "$(direnv hook zsh)"
+# eval "$(direnv hook zsh)"
 
 # zsh completions
 if type brew &>/dev/null; then
@@ -33,9 +33,6 @@ fi
 
 # Make Ruby use Homebrew OpenSSL
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
-
-# The next line enables shell command completion for gcloud.
-. /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc
 
 # Enable pyenv shims
 if command -v pyenv 1>/dev/null 2>&1; then

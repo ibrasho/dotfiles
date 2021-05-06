@@ -17,7 +17,6 @@ fi
 # Globally install with npm
 # To list globally installed npm packages and version: npm list -g --depth=0
 packages=(
-  diff-so-fancy
   trash-cli
 )
 

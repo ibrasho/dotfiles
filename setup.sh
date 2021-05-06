@@ -139,13 +139,14 @@ fi
 # Package managers & packages                                                 #
 ###############################################################################
 
-# print_info "Installing brew packages"
+# print_info "Installing npm packages"
+# source "$DOTFILES/install/npm.sh"
+
+print_info "Installing brew packages"
 source "$DOTFILES/install/brew.sh"
 
-if [ "$(uname)" == "Darwin" ]; then
-    print_info "Installing brew casks"
-    source "$DOTFILES/install/brew-cask.sh"
-fi
+print_info "Installing brew casks"
+source "$DOTFILES/install/brew-cask.sh"
 
 # print_info "Installing npm packages"
 # source "$DOTFILES/install/npm.sh"
@@ -187,9 +188,11 @@ defaults write "com.googlecode.iterm2.plist" "PrefsCustomFolder" -string "$DOTFI
 
 print_info "Installing cloudflared"
 
-mkdir -p "/usr/local/etc/cloudflared"
-if [ ! -f "/usr/local/etc/cloudflared/config.yaml" ]; then
-  ln -s "/usr/local/etc/cloudflared/config.yaml" "$DOTFILES/cloudflared/config.yaml"
+BREW_PREFIX=$(brew --prefix)
+
+mkdir -p "$BREW_PREFIX/etc/cloudflared"
+if [ ! -f "$BREW_PREFIX/etc/cloudflared/config.yaml" ]; then
+  ln -s "$BREW_PREFIX/etc/cloudflared/config.yaml" "$DOTFILES/cloudflared/config.yaml"
 fi
 
 if [ ! -f "$HOME/Library/LaunchAgents/com.cloudflare.cloudflared.plist" ]; then

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Install Caskroom
-brew tap caskroom/cask
-brew tap caskroom/versions
+brew tap homebrew/cask
+brew tap homebrew/cask-versions
 
 # Install packages
 apps=(
@@ -14,13 +14,12 @@ apps=(
   dropbox
   electrum
   firefox
-  caskroom/fonts/font-fira-code
-  caskroom/fonts/font-firacode-nerd-font
-  caskroom/fonts/font-robotomono-nerd-font
+  font-fira-code
+  font-fira-code-nerd-font
+  font-roboto-mono-nerd-font
   google-chrome
   google-cloud-sdk
   iterm2
-  java
   jetbrains-toolbox
   keybase
   microsoft-office
@@ -29,7 +28,6 @@ apps=(
   paw
   slack
   spotify
-  tunnelblick
   visual-studio-code
   whatsapp
 )
