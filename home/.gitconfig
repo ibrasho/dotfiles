@@ -193,6 +193,7 @@
 
 [url "git@github.com:"]
 	insteadOf = "gh:"
+	insteadOf = "https://github.com/"
 	pushInsteadOf = "github:"
 	pushInsteadOf = "git://github.com/"
 
@@ -206,6 +207,9 @@
 
 [url "git://gist.github.com/"]
 	insteadOf = "gist:"
+
+[url "git@bitbucket.org:"]
+	insteadOf = https://bitbucket.org/
 
 # Push easily http://stackoverflow.com/a/23918418/89484
 [push]
@@ -238,3 +242,4 @@
 
 [init]
 	defaultBranch = main
+

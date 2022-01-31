@@ -1,4 +1,5 @@
-if not command -s /opt/homebrew/bin/rbenv > /dev/null && not command -s /usr/local/bin/rbenv > /dev/null
+# if not command -s /opt/homebrew/bin/rbenv > /dev/null && not command -s /usr/local/bin/rbenv > /dev/null
+if not command -s rbenv > /dev/null
     echo "rbenv: command not found. See https://github.com/rbenv/rbenv"
     exit 1
 end

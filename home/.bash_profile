@@ -22,3 +22,5 @@ export BLOCKSIZE=1k
 #   ------------------------------------------------------------
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
+
+eval $(rbenv init - bash)

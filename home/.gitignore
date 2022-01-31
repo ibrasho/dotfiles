@@ -40,3 +40,6 @@ npm-debug.log
 *.sqlite
 ._*
 ehthumbs.db
+
+
+.jfrog

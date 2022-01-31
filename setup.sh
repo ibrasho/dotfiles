@@ -134,6 +134,8 @@ if [ ! -d "$HOME/Tools/dircolors" ]; then
   print_success "Installed dircolors"
 fi
 
+git clone https://github.com/rupa/z.git ~/Tools/z
+
 
 ###############################################################################
 # Package managers & packages                                                 #
@@ -206,24 +208,7 @@ fi
 
 grep -q -F "$(which fish)" /etc/shells || sudo sh -c "echo $(which fish) >> /etc/shells"
 
-# Set the default shell to zsh if it isn't currently set to zsh
+# Set the default shell to fish if it isn't currently set to fish
 if [ "$SHELL" != "$(which fish)" ]; then
   chsh -s $(which fish)
 fi
-
-###############################################################################
-# Zsh                                                                         #
-###############################################################################
-
-# source "$DOTFILES/install/zsh.sh"
-
-# # Install Zsh settings
-# mkdir -p "$HOME/.oh-my-zsh/custom/themes"
-
-# if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel9k" ]; then
-#   git clone "https://github.com/bhilburn/powerlevel9k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
-# fi
-
-
-# # Reload zsh settings                                                         #
-# zsh
