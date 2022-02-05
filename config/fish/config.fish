@@ -46,11 +46,25 @@ end
 
 eval (direnv hook fish)
 
-eval (rbenv init -  fish)
+# eval (rbenv init -  fish)
+set -gx PATH '/Users/ibrasho/.rbenv/shims' $PATH
+set -gx RBENV_SHELL fish
+command rbenv rehash 2>/dev/null
+function rbenv
+  set command $argv[1]
+  set -e argv[1]
+
+  switch "$command"
+  case rehash shell
+    rbenv "sh-$command" $argv|source
+  case '*'
+    command rbenv "$command" $argv
+  end
+end
 
 set -x THEFUCK_OVERRIDDEN_ALIASES 'gsed,git'
 
 # ssh-add
 
-# The next line updates PATH for the Google Cloud SDK.
+# # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/ibrasho/google-cloud-sdk/path.fish.inc' ]; . '/Users/ibrasho/google-cloud-sdk/path.fish.inc'; end
