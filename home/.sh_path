@@ -1,42 +1,27 @@
 # Explicitly configured $PATH
-PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+# PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-PATH="/usr/local/sbin:$PATH"
-PATH="/usr/local:$PATH"
+# PATH="/usr/local/sbin:$PATH"
+# PATH="/usr/local:$PATH"
 
-PATH="/usr/local/opt/coreutils/libexec/gnubin/:$PATH"
-MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+PATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
+MANPATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnuman:$MANPATH"
 
 PATH="$HOME/bin:$PATH"
 
-# Go
-PATH="$GOPATH/bin:$PATH"
-
-# Rust Cargo
-PATH="$HOME/.cargo/bin:$PATH"
-
-# Composer
-# PATH="./vendor/bin:$HOME/.composer/bin:$HOME/.composer/vendor/bin:$PATH"
-
 # NodeJS
-PATH="node_modules/.bin:$HOME/.node/bin:$PATH"
-
-# Python
-# PATH="$HOME/Library/Python/2.7/bin/:$PATH"
-
-# Android
-# PATH="/Development/android-sdk/platform-tools:/Development/android-sdk/tools:$PATH"
+PATH="./node_modules/.bin:$HOME/.node/bin:$PATH"
 
 # Composer
-PATH="vendor/bin:$HOME/.composer/vendor/bin:$PATH"
+PATH="./vendor/bin:$HOME/.composer/vendor/bin:$PATH"
 
-# added by Anaconda3 5.2.0 installer
-PATH="/anaconda3/bin:$PATH"
+# PATH="$HOME/.local/bin:$PATH"
 
-# Google Cloud SDK.
-PATH="$HOME/Tools/google-cloud-sdk/bin/:$PATH"
+# Ruby
+PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/ruby/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/ruby/lib/pkgconfig"
 
-# Flutter
-PATH="$HOME/Code/flutter/bin:$HOME/Code/flutter/bin/cache/dart-sdk/bin:$HOME/Code/flutter/.pub-cache/bin:$PATH"
-
+# Export
 export PATH MANPATH

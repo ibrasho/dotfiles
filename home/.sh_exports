@@ -3,8 +3,8 @@ export SHELL=$(which zsh)
 
 # History
 export HISTFILE=$HOME/.zsh_history
-export HISTSIZE=10000
-export SAVEHIST=10000
+export HISTSIZE=1000000
+export SAVEHIST=1000000
 
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
@@ -27,8 +27,8 @@ export SSH_KEY_PATH="$HOME/.ssh/ibrasho"
 export MANPAGER="less -X"
 
 # Make less the default pager, add some options and enable syntax highlight using source-highlight
-LESSPIPE=`which src-hilite-lesspipe.sh`
-[ -n "$LESSPIPE" ] && export LESSOPEN="| ${LESSPIPE} %s"
+# LESSPIPE=`which src-hilite-lesspipe.sh`
+# [ -n "$LESSPIPE" ] && export LESSOPEN="| ${LESSPIPE} %s"
 less_options=(
   # If the entire text fits on one screen, just show it and quit. (Be more
   # like "cat" and less like "more".)
@@ -59,8 +59,8 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
 # here's LS_COLORS
 # github.com/trapd00r/LS_COLORS
-command -v gdircolors >/dev/null 2>&1 || alias gdircolors="dircolors"
-eval "$(gdircolors -b $HOME/Tools/dircolors/dircolors.256dark)"
+# command -v gdircolors >/dev/null 2>&1 || alias gdircolors="dircolors"
+# eval "$(gdircolors -b $HOME/Tools/dircolors/dircolors.256dark)"
 
 export GOPATH=$HOME/Code/go
 

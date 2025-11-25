@@ -11,7 +11,9 @@ for file in ${SHELL_DOTFILES[@]}; do
   [ -r "$HOME/$file" ] && [ -f "$HOME/$file" ] && source "$HOME/$file"
 done
 
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+. "$HOME/.local/bin/env"

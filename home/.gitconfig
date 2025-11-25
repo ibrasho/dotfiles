@@ -6,6 +6,7 @@
 	autocrlf = input
 	mergeoptions = --no-edit
 	ignorecase = false
+	pager = delta --diff-so-fancy
 
 # A good list of alises http://haacked.com/archive/2014/07/28/github-flow-aliases/
 [alias]
@@ -138,7 +139,7 @@
 
 # So much color
 [color]
-	ui = always
+	ui = true
 
 [color "branch"]
 	current = green bold
@@ -146,35 +147,25 @@
 	remote = yellow
 
 [color "diff"]
-	frag = magenta
-	meta = yellow
-	new = green
-	old = red
+	frag = magenta bold
+	meta = 11
+	new = green bold
+	old = red bold
+	func = 146 bold
+	commit = yellow bold
+	whitespace = red reverse
 
 [color "diff-highlight"]
 	oldNormal = red bold
-	oldHighlight = "red bold 52"
-	newNormal = "green bold"
-	newHighlight = "green bold 22"
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
 
 [color "status"]
 	oldNormal = red bold
 	oldHighlight = red bold 52
 	newNormal = green bold
 	newHighlight = green bold 22
-
-# Git mergetool
-[merge]
-	tool = opendiff
-
-[pager]
-	# Insanely beautiful diffs ==> npm install -g diff-so-fancy
-	diff = diff-so-fancy | less --tabs=4 -RFX
-	show = diff-so-fancy | less --tabs=4 -RFX
-
-[diff "bin"]
-	# Use `hexdump` to diff binary files
-	textconv = hexdump -v -C
 
 [pretty]
 	custom = "%C(magenta)%h%C(red)%d %C(yellow)%ar %C(green)%s %C(yellow)(%an)"
@@ -226,11 +217,77 @@
 [commit]
 	gpgsign = true
 
+[user]
+	signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmPh5cfSqr8xFQbQ4w18Y/sik9zG1PJOQ1k27rzfv1hgwc2co1IOPNNAppXXY0ooZTHHIQRNQ/SpYTD8CmKvP2mOt/OHqa6piqKeMyyMNjGOQ4/VQOSHcQYmVmkl6SHA/cdYGgIPBAvF5im4kqLvAhw8xji0GDYvRYeyuq6HXFBsl73/+X6uIseSJgwbhw2T+BoK+zxduqYOfAGQoI74LI5O9CsJcznRQQRNj2b7KBGE7Hgg+rtHpMZ2gkEdx1hRyKEmjnozn4HZLE1mfzS4C+kb1nlb4bgpYwsTxxBH3UTTVRtI1rylGDjPR+TX0Mfzq2Y5ZSts8lgdvsPgJb0ytT
+	name = Ibrahim AshShohail
+	email = me@ibrasho.com
+
 [gpg]
-	program = /usr/local/bin/gpg
+	format = ssh
+
+[gpg "ssh"]
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 
 [tag]
 	forceSignAnnotated = true
 
 [pull]
 	rebase = true
+
+[init]
+	defaultBranch = main
+
+[interactive]
+	diffFilter = "delta --color-only --features=interactive --diff-so-fancy"
+
+# Git mergetool
+[merge]
+	tool = opendiff
+
+[diff "bin"]
+	# Use `hexdump` to diff binary files
+	textconv = hexdump -v -C
+
+[diff]
+    colorMoved = default
+
+[merge]
+    conflictstyle = diff3
+
+[rerere]
+    enabled = true              # Reuse recorded resolution
+
+[transfer]
+    fsckobjects = true          # Security check
+
+[maintenance]
+    auto = true                 # Background optimization
+
+[column]
+    ui = auto                   # Better column display
+
+[branch]
+    sort = -committerdate       # Sort branches by recent activity
+
+[delta]
+    features = decorations
+    navigate = true
+    light = false
+    # side-by-side = true
+    line-numbers = true
+    minus-style                   = bold red
+    minus-non-emph-style          = bold red
+    minus-emph-style              = bold reverse red
+    minus-empty-line-marker-style = normal "#3f0001"
+    plus-style                    = bold green
+    plus-non-emph-style           = bold green
+    plus-emph-style               = bold reverse green
+
+[delta "interactive"]
+    keep-plus-minus-markers = false
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+    hunk-header-decoration-style = cyan box ul

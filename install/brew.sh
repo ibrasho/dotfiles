@@ -6,7 +6,7 @@
 # Check for Homebrew and install it if missing
 if test ! $(which brew); then
   echo "Installing Homebrew..."
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 brew tap Goles/battery
@@ -39,15 +39,18 @@ apps=(
   gpg
   gnupg
 
-  cloudflare/cloudflare/cloudflared
+  curl
+  git
+  gnu-sed
+  imagemagick
+  ffmpeg
+
   jq
   source-highlight
-  mas					# Mac App Store CLI
+  mas				                       	# Mac App Store CLI
 
   bazel
 
-  go
-  nvm
   rbenv
 
   azure-cli
@@ -61,13 +64,6 @@ apps=(
 )
 
 brew install "${apps[@]}"
-
-brew install curl
-brew install git
-brew install gnu-sed
-brew install grep
-brew install imagemagick
-brew install ffmpeg
 
 # Remove outdated versions from the cellar
 brew cleanup

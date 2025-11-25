@@ -88,7 +88,7 @@ for file in $(ls $SOURCE_DIR); do
   TARGET_FILE="$TARGET_DIR/$file"
 
   safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$BIN_BACKUP"
-  chmod +x "$HOME/bin/${i##*/}"
+  chmod +x "$HOME/bin/${file##*/}"
 done
 
 
@@ -144,20 +144,6 @@ fi
 
 
 ###############################################################################
-# VS Code                                                                     #
-###############################################################################
-
-# Copy over sync settings
-VSCODE_USER_DIR="$HOME/Library/Application\ Support/Code/User"
-mkdir -p "$VSCODE_USER_DIR"
-
-if [ ! -f "$VSCODE_USER_DIR/syncLocalSettings.json" ]; then
-  cp "vscode/syncLocalSettings.json" "$VSCODE_USER_DIR/syncLocalSettings.json"
-  print_info "Add your Github token to $VSCODE_USER_DIR/syncLocalSettings.json and install the Settings Sync extension"
-fi
-
-
-###############################################################################
 # iTerm 2                                                                     #
 ###############################################################################
 
@@ -195,10 +181,9 @@ source "$DOTFILES/install/zsh.sh"
 # Install Zsh settings
 mkdir -p "$HOME/.oh-my-zsh/custom/themes"
 
-if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel9k" ]; then
-  git clone "https://github.com/bhilburn/powerlevel9k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
+if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]; then
+  git clone "https://github.com/bhilburn/powerlevel10k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
 fi
-
 
 ###############################################################################
 # Reload zsh settings                                                         #

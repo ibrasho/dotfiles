@@ -1,17 +1,26 @@
 set -e
 
+if test ! $(which volta)
+then
+  echo "Installing a stable version of Node..."
+
+  # Install the latest stable version of node
+  volta install stable
+fi
+
+
 if test ! $(which nvm)
 then
   echo "Installing a stable version of Node..."
 
   # Install the latest stable version of node
-  nvm install stable
+  # nvm install stable
 
   # Switch to the installed version
-  nvm use node
+  # nvm use node
 
   # Use the stable version of node by default
-  nvm alias default node
+  # nvm alias default node
 fi
 
 # Globally install with npm

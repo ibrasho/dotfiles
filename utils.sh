@@ -43,7 +43,7 @@ safeSymlink() {
     if [ "$(readlink "$2")" != "$1" ]; then
       ask_for_confirmation "'$2' already exists, move to $3?"
       if answer_is_yes; then
-        mv "$1" "$3/"
+        mv "$2" "$3/"
         print_success "(file backup) $1 -> $3/"
         execute "ln -fs $1 $2" "(link created) $1 -> $2"
       else
