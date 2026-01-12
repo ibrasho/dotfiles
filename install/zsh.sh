@@ -1,16 +1,13 @@
 # Test to see if zshell is installed.
 if [ -f /bin/zsh -o -f /usr/bin/zsh ]; then
-  # Install Oh My Zsh if it isn't already present
-  if [ ! -d $HOME/.oh-my-zsh/ ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-  fi
+  ZSH_PATH="$(command -v zsh)"
 
   # Make sure zsh is in the allowed shells list
-  grep -q -F "$(which zsh)" /etc/shells || sudo sh -c "echo $(which zsh) >> /etc/shells"
+  grep -q -F "$ZSH_PATH" /etc/shells || sudo sh -c "echo $ZSH_PATH >> /etc/shells"
 
   # Set the default shell to zsh if it isn't currently set to zsh
-  if [ "$SHELL" != "$(which zsh)" ]; then
-    chsh -s $(which zsh)
+  if [ "$SHELL" != "$ZSH_PATH" ]; then
+    chsh -s "$ZSH_PATH"
   fi
 else
   # If zsh isn't installed, get the platform of the current machine

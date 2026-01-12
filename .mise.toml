@@ -1,0 +1,36 @@
+# Mise configuration file
+# This file manages runtime versions for various languages
+# Copy this to ~/.config/mise/config.toml or your project root as .mise.toml
+#
+# After installing mise, run:
+#   mise install    # Install all tools defined in this file
+#   mise use -g     # Use these versions globally
+#
+# See: https://mise.jdx.dev/
+
+[tools]
+# Note: Node.js is managed by Herd's NVM, not mise
+# If you need Node.js outside of Herd projects, uncomment below:
+# node = "lts"
+
+# Ruby - Latest stable version
+ruby = "latest"
+
+# Python - Latest stable version
+python = "latest"
+
+# Go - Latest version
+go = "latest"
+
+# PHP - Managed by Herd (do not enable here)
+# php = "8.5"
+
+[settings]
+# Use all available cores for parallel installation
+jobs = 4
+
+# Enable legacy version file support (.nvmrc, .ruby-version, etc.)
+legacy_version_file = true
+
+# Automatically install missing tools when entering a directory
+auto_install = true

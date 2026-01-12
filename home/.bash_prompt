@@ -111,7 +111,7 @@ PS1+="\n";
 PS1+="\[${white}\]\$ \[${reset}\]"; # `$` (and reset color)
 export PS1;
 
-if [[ $SHELL == "/use/local/bin/zsh" ]]; then
+if [[ $SHELL == "/usr/local/bin/zsh" ]]; then
 	PS2="\[${yellow}\]╰─ \[${reset}\]";
 	export PS2;
 fi

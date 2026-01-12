@@ -4,12 +4,10 @@
 # software development.
 
 # Check for Homebrew and install it if missing
-if test ! $(which brew); then
+if ! command -v brew >/dev/null 2>&1; then
   echo "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
-
-brew tap Goles/battery
 
 # Make sure we’re using the latest Homebrew
 brew update
@@ -18,9 +16,9 @@ brew update
 brew upgrade
 
 apps=(
-  zsh
-
   bash-completion2
+
+  zsh
   zsh-completions
 
   coreutils
@@ -33,9 +31,6 @@ apps=(
   tmux
   wget
 
-  go
-
-  autojump
   gpg
   gnupg
 
@@ -47,19 +42,24 @@ apps=(
 
   jq
   source-highlight
-  mas				                       	# Mac App Store CLI
+  shellcheck         # Shell script linter
 
-  bazel
+  # Version manager - replaces rbenv, nvm, etc.
+  mise
 
-  rbenv
+  # Modern CLI tools
+  starship           # Fast, customizable shell prompt
+  zoxide             # Smarter cd
+  bat                # Better cat with syntax highlighting
+  eza                # Modern ls replacement
+  fd                 # Better find
+  procs              # Modern ps
+  lazygit            # TUI for git
+  git-delta          # Better git diff
+  ripgrep            # Better grep (rg)
 
-  azure-cli
   aws-shell
-  terraform
 
-  kubernetes-cli
-  kubernetes-helm
-  kubectx
   direnv
 )
 

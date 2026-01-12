@@ -1,15 +1,7 @@
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-
-
 # Enable aliases to be sudo’ed
 alias sudo="sudo "
 
 alias dc="docker-compose"
-alias ku="kubectl"
-alias kp="kube-prompt"
 
 # Shortcuts
 alias g="git"
@@ -22,26 +14,43 @@ alias cp="cp -v"
 
 # Be nice
 alias htop='sudo htop'
-alias hosts='sudo $EDITOR /etc/hosts'   # yes I occasionally 127.0.0.1 twitter.com ;)
+alias hosts='sudo $EDITOR /etc/hosts'
 
-#
-# Time to upgrade `ls`
+# Modern CLI tools
 
-# Use coreutils `ls` if possible
-hash gls >/dev/null 2>&1 || alias gls="ls"
-
-# Always use color output for `ls`
-# Detect which `ls` flavor is in use
-if gls --color > /dev/null 2>&1; then # GNU `ls`
-  colorflag="--color"
-else # OS X `ls`
-  colorflag="-G"
+# Use eza (modern ls) if available, otherwise fallback to ls/gls
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --icons --group-directories-first'
+  alias ll='eza --icons --group-directories-first -l'
+  alias la='eza --icons --group-directories-first -la'
+  alias lt='eza --icons --group-directories-first --tree'
+  alias lta='eza --icons --group-directories-first --tree -a'
+else
+  # Fallback to traditional ls
+  hash gls >/dev/null 2>&1 || alias gls="ls"
+  if gls --color > /dev/null 2>&1; then
+    colorflag="--color"
+  else
+    colorflag="-G"
+  fi
+  export CLICOLOR_FORCE=1
+  alias ls='ls -AFh ${colorflag}'
 fi
 
-export CLICOLOR_FORCE=1
+# Use bat (better cat) if available
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --paging=never'
+  alias less='bat --paging=always'
+  alias bathelp='bat --plain --language=help'
+  help() {
+    "$@" --help 2>&1 | bathelp
+  }
+fi
 
-# ls options: A = include hidden (but not . or ..), F = put `/` after folders, h = byte unit suffixes
-alias ls='ls -AFh ${colorflag}'
+# Use fd (better find) if available
+if command -v fd >/dev/null 2>&1; then
+  alias find='fd'
+fi
 
 # IP addresses
 alias localip="ipconfig getifaddr en1"
@@ -71,19 +80,16 @@ alias free_diskspace_report="diskspace_report"
 
 # File size
 alias fs="stat -f \"%z bytes\""
+
 # Empty the Trash on all mounted volumes and the main HDD.
 # Also, clear Apple’s System Logs & the useless sleepimage to improve shell startup speed
 alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo grm -rf $HOME/.Trash; sudo rm -rtv /private/var/log/asl/*.asl; sudo rm /private/var/vm/sleepimage"
 
 # zshrc config
 if [[ $SHELL == '/usr/local/bin/zsh' ]]; then
-	alias zshrc="${EDITOR} $HOME/.zshrc)"
+	alias zshrc="${EDITOR} $HOME/.zshrc"
 fi
 alias reload="source $HOME/.zshrc && echo 'Shell config reloaded from $HOME/.zshrc'"
 
 # zsh.local config
-alias localrc="if [ -a $HOME/.zsh.local ]; then ${EDITOR} $HOME/.zsh.local; fi"
-
-alias docs="code ~/Dropbox/Documents"
-
-alias gam="~/bin/gam/gam"
+alias localrc="if [ -f $HOME/.zsh.local ]; then ${EDITOR} $HOME/.zsh.local; fi"

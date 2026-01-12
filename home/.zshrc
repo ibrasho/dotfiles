@@ -1,17 +1,6 @@
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
-
 # export TERM="xterm-256color"
 
 [ -f $HOME/.zsh_theme ] && source $HOME/.zsh_theme
-
-# Which plugins would you like to load? (plugins can be found in $HOME/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to $HOME/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=()
-
-# source $ZSH/oh-my-zsh.sh
 
 # Smart URLs
 autoload -Uz url-quote-magic
@@ -70,8 +59,11 @@ unsetopt RM_STAR_SILENT
 
 # load auto completion
 autoload -Uz compinit
-compinit
-
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' menu select
@@ -85,37 +77,45 @@ zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 # Load the generic shell profile
 [ -f $HOME/.profile ] && source $HOME/.profile
 
-export NVM_DIR="/Users/ibrasho/Library/Application Support/Herd/config/nvm"
-nvm() {
-  unset -f nvm
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  nvm "$@"
-}
+# Herd's NVM (required for Herd's Node.js integration)
+export NVM_DIR="$HOME/Library/Application Support/Herd/config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && builtin source "$NVM_DIR/nvm.sh"
 
+# Herd PHP environment
 [[ -f "/Applications/Herd.app/Contents/Resources/config/shell/zshrc.zsh" ]] && builtin source "/Applications/Herd.app/Contents/Resources/config/shell/zshrc.zsh"
+export PATH="$HOME/Library/Application Support/Herd/bin/":$PATH
 
-# Herd injected PHP binary.
-export PATH="/Users/ibrasho/Library/Application Support/Herd/bin/":$PATH
+# Mise version manager (replaces rbenv, nvm, etc.)
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
 
-eval "$(direnv hook zsh)"
+# Direnv - load environment variables per directory
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
 
-eval "$(starship init zsh)"
+# Zoxide - smarter cd command
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
+
+# Starship prompt
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/ibrasho/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ibrasho/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/ibrasho/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ibrasho/google-cloud-sdk/completion.zsh.inc'; fi
-
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 
 # Herd injected PHP 8.4 configuration.
-export HERD_PHP_84_INI_SCAN_DIR="/Users/ibrasho/Library/Application Support/Herd/config/php/84/"
+export HERD_PHP_84_INI_SCAN_DIR="$HOME/Library/Application Support/Herd/config/php/84/"
 
 # Herd injected PHP 8.5 configuration.
-export HERD_PHP_85_INI_SCAN_DIR="/Users/ibrasho/Library/Application Support/Herd/config/php/85/"
+export HERD_PHP_85_INI_SCAN_DIR="$HOME/Library/Application Support/Herd/config/php/85/"
 
 # Added by Antigravity
-export PATH="/Users/ibrasho/.antigravity/antigravity/bin:$PATH"
-
-. "$HOME/.local/bin/env"
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"

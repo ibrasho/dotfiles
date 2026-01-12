@@ -40,13 +40,14 @@ print_info "Changing to the $DOTFILES directory..."
 # Actual symlink stuff
 print_info "Creating symlinks"
 
-for file in $(ls -a $DOTFILES/home); do
-  SOURCE_FILE="${DOTFILES}/home/$file"
-  TARGET_FILE="$HOME/$file"
+for file in "$DOTFILES/home"/.[^.]* "$DOTFILES/home"/*; do
+  [ -e "$file" ] || continue
+  [ -f "$file" ] || continue
 
-  if [ -f $SOURCE_FILE ]; then
-    safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$DOTFILES_BACKUP"
-  fi
+  SOURCE_FILE="$file"
+  TARGET_FILE="$HOME/$(basename "$file")"
+
+  safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$DOTFILES_BACKUP"
 done
 
 if [ ! -d "$HOME/.ssh" ]; then
@@ -63,57 +64,16 @@ if [ ! -d "$HOME/.gnupg" ]; then
   chmod 700 "$HOME/.gnupg"
 fi
 
+if [ -d "$DOTFILES/gnupg" ]; then
+  for file in "$DOTFILES/gnupg"/*; do
+    [ -f "$file" ] || continue
 
-for file in $(ls $DOTFILES/gnupg); do
-  SOURCE_FILE="${DOTFILES}/gnupg/$file"
-  TARGET_FILE="$HOME/.gnupg/$file"
+    SOURCE_FILE="$file"
+    TARGET_FILE="$HOME/.gnupg/$(basename "$file")"
 
-  safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$DOTFILES_BACKUP"
-done
-
-
-safeSymlink "$DOTFILES/gnupg/gpg.conf" "$HOME/.gnupg/gpg.conf" "$DOTFILES_BACKUP"
-safeSymlink "$DOTFILES/gnupg/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf" "$DOTFILES_BACKUP"
-
-
-# Copy scripts
-SOURCE_DIR="$DOTFILES/scripts"
-TARGET_DIR="$HOME/bin"
-mkdir -p "$TARGET_DIR"
-
-print_info "Copying scripts from $SOURCE_DIR to $TARGET_DIR"
-
-for file in $(ls $SOURCE_DIR); do
-  SOURCE_FILE="$SOURCE_DIR/$file"
-  TARGET_FILE="$TARGET_DIR/$file"
-
-  safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$BIN_BACKUP"
-  chmod +x "$HOME/bin/${file##*/}"
-done
-
-
-###############################################################################
-# Crontab                                                                     #
-###############################################################################
-
-print_info "Updating crontab"
-
-# Write out current crontab
-crontab -l > /tmp/mycron
-
-# Echo new cron into cron file
-for cmd in online_check battery_check.py; do
-  cron="* * * * * $HOME/bin/$cmd &> /dev/null"
-  grep -q "$cron" /tmp/mycron
-  if [ $? -eq 1 ]; then
-    echo "$cron" >> /tmp/mycron
-    print_success "Added $cmd to crontab"
-  fi
-done
-
-# Install new cron file
-crontab /tmp/mycron
-rm /tmp/mycron
+    safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$DOTFILES_BACKUP"
+  done
+fi
 
 
 ###############################################################################
@@ -130,9 +90,6 @@ fi
 ###############################################################################
 # Package managers & packages                                                 #
 ###############################################################################
-
-# print_info "Installing npm packages"
-# source "$DOTFILES/install/npm.sh"
 
 # print_info "Installing brew packages"
 source "$DOTFILES/install/brew.sh"
@@ -164,7 +121,7 @@ print_info "Installing cloudflared"
 
 mkdir -p "/usr/local/etc/cloudflared"
 if [ ! -f "/usr/local/etc/cloudflared/config.yaml" ]; then
-  ln -s "/usr/local/etc/cloudflared/config.yaml" "$DOTFILES/cloudflared/config.yaml"
+  ln -s "$DOTFILES/cloudflared/config.yaml" "/usr/local/etc/cloudflared/config.yaml"
 fi
 
 if [ ! -f "$HOME/Library/LaunchAgents/com.cloudflare.cloudflared.plist" ]; then
@@ -177,13 +134,6 @@ fi
 ###############################################################################
 
 source "$DOTFILES/install/zsh.sh"
-
-# Install Zsh settings
-mkdir -p "$HOME/.oh-my-zsh/custom/themes"
-
-if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]; then
-  git clone "https://github.com/bhilburn/powerlevel10k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
-fi
 
 ###############################################################################
 # Reload zsh settings                                                         #

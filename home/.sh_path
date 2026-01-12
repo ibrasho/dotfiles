@@ -4,24 +4,31 @@
 # PATH="/usr/local/sbin:$PATH"
 # PATH="/usr/local:$PATH"
 
-PATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
-MANPATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnuman:$MANPATH"
+if command -v brew >/dev/null 2>&1; then
+  HOMEBREW_PREFIX="$(brew --prefix)"
+  PATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
+  MANPATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnuman:$MANPATH"
+fi
 
 PATH="$HOME/bin:$PATH"
 
-# NodeJS
-PATH="./node_modules/.bin:$HOME/.node/bin:$PATH"
+# Global Node.js packages from Herd NVM
+PATH="$HOME/.node/bin:$PATH"
 
-# Composer
-PATH="./vendor/bin:$HOME/.composer/vendor/bin:$PATH"
+# Global Composer packages
+PATH="$HOME/.composer/vendor/bin:$PATH"
+
+# Security Note: Local project binaries (./node_modules/.bin and ./vendor/bin)
+# are NOT added to PATH by default to prevent command injection vulnerabilities.
+# Use one of these safer alternatives:
+#   - npx <command>           # For Node.js binaries
+#   - composer exec <command> # For PHP binaries
+#   - direnv                  # For trusted project directories only
 
 # PATH="$HOME/.local/bin:$PATH"
 
-# Ruby
-PATH="/opt/homebrew/opt/ruby/bin:$PATH"
-export LDFLAGS="-L/opt/homebrew/opt/ruby/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
-export PKG_CONFIG_PATH="/opt/homebrew/opt/ruby/lib/pkgconfig"
+# Note: Ruby, Node.js, Python versions are now managed by mise
+# Run: mise use -g node@lts ruby@latest python@latest
 
 # Export
 export PATH MANPATH

@@ -15,8 +15,11 @@
 #
 #  ---------------------------------------------------------------------------
 
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-  . `brew --prefix`/etc/bash_completion
+if command -v brew >/dev/null 2>&1; then
+  BREW_PREFIX="$(brew --prefix)"
+  if [ -f "$BREW_PREFIX/etc/bash_completion" ]; then
+    . "$BREW_PREFIX/etc/bash_completion"
+  fi
 fi
 
 # Git branch in prompt.
@@ -61,8 +64,8 @@ source $HOME/.bash_prompt
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
-export MAMBA_EXE='/Users/ibrasho/.micromamba/bin/micromamba';
-export MAMBA_ROOT_PREFIX='/Users/ibrasho/micromamba';
+export MAMBA_EXE='$HOME/.micromamba/bin/micromamba';
+export MAMBA_ROOT_PREFIX='$HOME/micromamba';
 __mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__mamba_setup"
@@ -74,14 +77,14 @@ unset __mamba_setup
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/ibrasho/micromamba/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('$HOME/micromamba/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/Users/ibrasho/micromamba/etc/profile.d/conda.sh" ]; then
-        . "/Users/ibrasho/micromamba/etc/profile.d/conda.sh"
+    if [ -f "$HOME/micromamba/etc/profile.d/conda.sh" ]; then
+        . "$HOME/micromamba/etc/profile.d/conda.sh"
     else
-        export PATH="/Users/ibrasho/micromamba/bin:$PATH"
+        export PATH="$HOME/micromamba/bin:$PATH"
     fi
 fi
 unset __conda_setup

@@ -3,12 +3,7 @@
 # Install packages
 apps=(
   1password
-  authy
-  alfred
   docker
-  dropbox
-  electrum
-  firefox
   font-fira-code
   font-firacode-nerd-font
   font-robotomono-nerd-font
@@ -17,14 +12,10 @@ apps=(
   iterm2
   java
   jetbrains-toolbox
-  keybase
   microsoft-office
-  minikube
   postman
-  paw
   slack
   spotify
-  tunnelblick
   visual-studio-code
   whatsapp
 )
@@ -43,4 +34,4 @@ qlplugins=(
   webpquicklook
 )
 
-brew cask install "${qlplugins[@]}"
+brew install --cask "${qlplugins[@]}"

@@ -1,5 +1,0 @@
-#!/bin/bash
-
-battery=`$HOME/bin/battery_check.py`
-
-echo $battery > $HOME/.battery_status

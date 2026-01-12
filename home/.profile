@@ -4,16 +4,16 @@ local SHELL_DOTFILES=(
   .sh_exports
   .sh_functions
   .sh_aliases
-  .sh_aliases_docker
-  .sh_aliases_kubectl
 )
 for file in ${SHELL_DOTFILES[@]}; do
-  [ -r "$HOME/$file" ] && [ -f "$HOME/$file" ] && source "$HOME/$file"
+  if [ -r "$HOME/$file" ] && [ -f "$HOME/$file" ]; then
+    source "$HOME/$file" || print_error "Failed to source $file"
+  fi
 done
 
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Mise version manager (replaces rbenv, nvm, etc.)
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate bash)"
+fi
 
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-
-. "$HOME/.local/bin/env"
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"

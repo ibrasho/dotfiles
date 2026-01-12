@@ -6,7 +6,7 @@
 	autocrlf = input
 	mergeoptions = --no-edit
 	ignorecase = false
-	pager = delta --diff-so-fancy
+	pager = delta
 
 # A good list of alises http://haacked.com/archive/2014/07/28/github-flow-aliases/
 [alias]
@@ -217,10 +217,8 @@
 [commit]
 	gpgsign = true
 
-[user]
-	signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmPh5cfSqr8xFQbQ4w18Y/sik9zG1PJOQ1k27rzfv1hgwc2co1IOPNNAppXXY0ooZTHHIQRNQ/SpYTD8CmKvP2mOt/OHqa6piqKeMyyMNjGOQ4/VQOSHcQYmVmkl6SHA/cdYGgIPBAvF5im4kqLvAhw8xji0GDYvRYeyuq6HXFBsl73/+X6uIseSJgwbhw2T+BoK+zxduqYOfAGQoI74LI5O9CsJcznRQQRNj2b7KBGE7Hgg+rtHpMZ2gkEdx1hRyKEmjnozn4HZLE1mfzS4C+kb1nlb4bgpYwsTxxBH3UTTVRtI1rylGDjPR+TX0Mfzq2Y5ZSts8lgdvsPgJb0ytT
-	name = Ibrahim AshShohail
-	email = me@ibrasho.com
+# User configuration is loaded from ~/.gitconfig.local
+# See README.md for template
 
 [gpg]
 	format = ssh
@@ -238,11 +236,12 @@
 	defaultBranch = main
 
 [interactive]
-	diffFilter = "delta --color-only --features=interactive --diff-so-fancy"
+	diffFilter = "delta --color-only --features=interactive"
 
 # Git mergetool
 [merge]
 	tool = opendiff
+    conflictstyle = diff3
 
 [diff "bin"]
 	# Use `hexdump` to diff binary files
@@ -250,9 +249,6 @@
 
 [diff]
     colorMoved = default
-
-[merge]
-    conflictstyle = diff3
 
 [rerere]
     enabled = true              # Reuse recorded resolution
