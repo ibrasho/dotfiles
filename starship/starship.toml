@@ -1,0 +1,10 @@
+# Starship prompt configuration
+# https://starship.rs/config/
+# Symlinked to ~/.config/starship.toml by setup.sh
+
+# The default 30ms scan budget is too tight for large directories and causes
+# "Scanning current directory timed out" warnings on every prompt there.
+scan_timeout = 100
+
+# Give slow commands (git status on big repos, version lookups) more headroom.
+command_timeout = 1000
