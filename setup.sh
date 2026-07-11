@@ -104,11 +104,24 @@ fi
 # Installed AFTER ~/.claude exists so the installer can register its
 # Claude Code PreToolUse hook in ~/.claude/settings.json (--easy-mode
 # also puts the binary on PATH and configures other detected agents).
+#
+# Pinned to a tag (not main) and downloaded to a file before execution:
+# piping an unpinned branch straight into bash would run whatever the
+# repo serves that day, including a truncated stream. Bump deliberately.
+DCG_VERSION="v0.6.5"
 if ! command -v dcg >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/dcg" ]; then
-  print_info "Installing dcg (destructive command guard)"
-  curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/destructive_command_guard/main/install.sh" \
-    | bash -s -- --easy-mode \
-    || print_error "dcg install failed; install manually" ""
+  print_info "Installing dcg (destructive command guard) $DCG_VERSION"
+  DCG_INSTALLER="$(mktemp -t dcg-install)"
+  if curl -fsSL -o "$DCG_INSTALLER" \
+      "https://raw.githubusercontent.com/Dicklesworthstone/destructive_command_guard/$DCG_VERSION/install.sh" \
+      && bash "$DCG_INSTALLER" --easy-mode; then
+    print_success "dcg installed"
+  fi
+  rm -f "$DCG_INSTALLER"
+  # dcg is a safety control — do not let a failed install pass silently.
+  if ! command -v dcg >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/dcg" ]; then
+    print_error "dcg IS NOT INSTALLED — destructive-command guard is inactive; install manually" ""
+  fi
 fi
 
 ###############################################################################
