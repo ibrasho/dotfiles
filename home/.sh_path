@@ -4,8 +4,12 @@
 # PATH="/usr/local/sbin:$PATH"
 # PATH="/usr/local:$PATH"
 
-if command -v brew >/dev/null 2>&1; then
-  HOMEBREW_PREFIX="$(brew --prefix)"
+# Hardcoded prefix instead of `brew --prefix` — forking brew costs
+# ~50-100ms on every shell startup.
+HOMEBREW_PREFIX="/opt/homebrew"
+[ -d "$HOMEBREW_PREFIX" ] || HOMEBREW_PREFIX="/usr/local"
+
+if [ -d "$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin" ]; then
   PATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
   MANPATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnuman:$MANPATH"
 fi

@@ -15,11 +15,13 @@
 #
 #  ---------------------------------------------------------------------------
 
-if command -v brew >/dev/null 2>&1; then
-  BREW_PREFIX="$(brew --prefix)"
-  if [ -f "$BREW_PREFIX/etc/bash_completion" ]; then
-    . "$BREW_PREFIX/etc/bash_completion"
-  fi
+BREW_PREFIX="/opt/homebrew"
+[ -d "$BREW_PREFIX" ] || BREW_PREFIX="/usr/local"
+# bash-completion@2 installs to share/bash-completion (v1 used etc/bash_completion)
+if [ -f "$BREW_PREFIX/etc/profile.d/bash_completion.sh" ]; then
+  . "$BREW_PREFIX/etc/profile.d/bash_completion.sh"
+elif [ -f "$BREW_PREFIX/etc/bash_completion" ]; then
+  . "$BREW_PREFIX/etc/bash_completion"
 fi
 
 # Git branch in prompt.
@@ -41,12 +43,10 @@ parse_git_branch() {
 
 # Load the shell dotfiles, and then some:
 
-source $HOME/.profile
-source $HOME/.bash_prompt
+source "$HOME/.profile"
+source "$HOME/.bash_prompt"
 
-#   Set Default Editor (change 'Nano' to the editor of your choice)
-#   ------------------------------------------------------------
-  export EDITOR=/usr/bin/vi
+# EDITOR is set to vim in .sh_exports (sourced via .profile above)
 
 #   Set default blocksize for ls, df, du
 #   from this: http://hints.macworld.com/comment.php?mode=view&cid=24491
@@ -64,10 +64,9 @@ source $HOME/.bash_prompt
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
-export MAMBA_EXE='$HOME/.micromamba/bin/micromamba';
-export MAMBA_ROOT_PREFIX='$HOME/micromamba';
-__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
-if [ $? -eq 0 ]; then
+export MAMBA_EXE="$HOME/.micromamba/bin/micromamba";
+export MAMBA_ROOT_PREFIX="$HOME/micromamba";
+if __mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"; then
     eval "$__mamba_setup"
 else
     alias micromamba="$MAMBA_EXE"  # Fallback on help from mamba activate
@@ -77,8 +76,7 @@ unset __mamba_setup
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('$HOME/micromamba/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
+if __conda_setup="$("$HOME/micromamba/bin/conda" 'shell.bash' 'hook' 2> /dev/null)"; then
     eval "$__conda_setup"
 else
     if [ -f "$HOME/micromamba/etc/profile.d/conda.sh" ]; then
@@ -90,7 +88,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-# export VOLTA_HOME="$HOME/.volta"
-# export PATH="$VOLTA_HOME/bin:$PATH"
-
-. "$HOME/.local/bin/env"
+# .local/bin/env and .cargo/env are already sourced (guarded) by .profile
