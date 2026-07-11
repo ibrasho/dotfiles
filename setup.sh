@@ -97,6 +97,21 @@ elif [ ! -d "$HOME/.claude/.git" ]; then
 fi
 
 ###############################################################################
+# dcg — destructive command guard                                             #
+# https://github.com/Dicklesworthstone/destructive_command_guard              #
+###############################################################################
+
+# Installed AFTER ~/.claude exists so the installer can register its
+# Claude Code PreToolUse hook in ~/.claude/settings.json (--easy-mode
+# also puts the binary on PATH and configures other detected agents).
+if ! command -v dcg >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/dcg" ]; then
+  print_info "Installing dcg (destructive command guard)"
+  curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/destructive_command_guard/main/install.sh" \
+    | bash -s -- --easy-mode \
+    || print_error "dcg install failed; install manually" ""
+fi
+
+###############################################################################
 # ~/.config tools (starship, mise)                                            #
 ###############################################################################
 
