@@ -1,13 +1,27 @@
-Host *
-	User ibrasho
-	AddKeysToAgent yes
-	IdentityFile ~/.ssh/ibrasho
-	ForwardAgent yes
+# Specific hosts first: ssh uses the FIRST obtained value per option,
+# so Host * must stay at the bottom.
 
 Host github.com
 	Hostname ssh.github.com
 	User git
 	Port 443
+	IdentityFile ~/.ssh/ibrasho.pub
 
 Host *
-  IdentityAgent "~/.1password/agent.sock"
+	User ibrasho
+	AddKeysToAgent yes
+	IdentityAgent "~/.1password/agent.sock"
+	# Only offer the keys listed below (the *.pub files select keys held by
+	# the 1Password agent) instead of every key in the agent — prevents
+	# remote hosts from enumerating all keys and MaxAuthTries lockouts.
+	IdentitiesOnly yes
+	IdentityFile ~/.ssh/ibrasho.pub
+	IdentityFile ~/.ssh/aqar.pub
+	IdentityFile ~/.ssh/aqar-data-ireland.pub
+	# Don't store hostnames in plaintext in known_hosts
+	HashKnownHosts yes
+	# ForwardAgent is intentionally NOT enabled globally — a forwarded agent
+	# lets any root user on the remote host authenticate as you.
+	# Enable it per-host for trusted machines:
+	#   Host trusted-host
+	#     ForwardAgent yes

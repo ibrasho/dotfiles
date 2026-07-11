@@ -1,1 +1,10 @@
 *.cache
+
+# Machine-local files that must never be committed.
+# These are listed HERE (not only in the global ~/.gitignore) because the
+# global ignore is itself installed by this repo — on a fresh clone it does
+# not exist yet, and `git add -A` would otherwise stage credentials.
+private/
+.gitconfig.local
+.claude/settings.local.json
+.zsh.local
