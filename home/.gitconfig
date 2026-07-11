@@ -168,6 +168,9 @@
 [url "git@github.com:"]
 	insteadOf = "gh:"
 	pushInsteadOf = "github:"
+	# Push over SSH (1Password agent) even in repos cloned via HTTPS;
+	# fetches keep using HTTPS, so read-only clones stay tokenless.
+	pushInsteadOf = "https://github.com/"
 
 [url "https://github.com/"]
 	insteadOf = "github:"
