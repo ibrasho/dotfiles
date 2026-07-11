@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 # ~/.macos — https://mths.be/macos
+#
+# NOTE: on modern macOS the Safari section (and some Mail settings) require
+# the terminal to have Full Disk Access (System Settings → Privacy & Security
+# → Full Disk Access), otherwise those `defaults write` calls fail silently.
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
@@ -65,9 +69,6 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
-# Disable the “Are you sure you want to open this application?” dialog
-defaults write com.apple.LaunchServices LSQuarantine -bool false
-
 # Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 
@@ -92,12 +93,9 @@ defaults write com.apple.LaunchServices LSQuarantine -bool false
 # See https://github.com/mathiasbynens/dotfiles/issues/237
 #echo "0x08000100:0" > ~/.CFUserTextEncoding
 
-# Reveal IP address, hostname, OS version, etc. when clicking the clock
-# in the login window
-sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
-
 # Restart automatically if the computer freezes
-sudo systemsetup -setrestartfreeze on
+# (deprecated/no-op on modern macOS but harmless)
+sudo systemsetup -setrestartfreeze on 2>/dev/null
 
 # Never go into computer sleep mode
 # sudo systemsetup -setcomputersleep Off > /dev/null
@@ -157,9 +155,6 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 # Disable “natural” (Lion-style) scrolling
 # defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
-
-# Increase sound quality for Bluetooth headphones/headsets
-defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
 
 # Enable full keyboard access for all controls
 # (e.g. enable Tab in modal dialogs)
@@ -261,9 +256,6 @@ defaults write com.apple.finder _FXSortFoldersFirst -bool true
 # When performing a search, search the current folder by default
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
-# Disable the warning when changing a file extension
-defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
-
 # Enable spring loading for directories
 defaults write NSGlobalDomain com.apple.springing.enabled -bool true
 
@@ -274,38 +266,40 @@ defaults write NSGlobalDomain com.apple.springing.delay -float 0
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
-# Disable disk image verification
-defaults write com.apple.frameworks.diskimages skip-verify -bool true
-defaults write com.apple.frameworks.diskimages skip-verify-locked -bool true
-defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
+# Finder icon-view settings. On a fresh machine the view-settings dicts do
+# not exist yet and PlistBuddy `Set` fails — this helper falls back to `Add`,
+# creating missing ancestor dicts along the way.
+finder_plist() {
+	local keypath=$1 type=$2 value=$3
+	local plist=~/Library/Preferences/com.apple.finder.plist
+	if ! /usr/libexec/PlistBuddy -c "Set :${keypath} ${value}" "$plist" 2>/dev/null; then
+		local partial="" i
+		IFS=':' read -ra parts <<< "$keypath"
+		for i in "${!parts[@]}"; do
+			partial="${partial}:${parts[$i]}"
+			if [ "$i" -lt "$(( ${#parts[@]} - 1 ))" ]; then
+				/usr/libexec/PlistBuddy -c "Add ${partial} dict" "$plist" 2>/dev/null
+			else
+				/usr/libexec/PlistBuddy -c "Add ${partial} ${type} ${value}" "$plist" \
+					|| echo "warning: could not set Finder pref ${keypath}"
+			fi
+		done
+	fi
+}
 
-# Automatically open a new Finder window when a volume is mounted
-defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
-defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
-defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
-
-# Show item info near icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
+for view in DesktopViewSettings FK_StandardViewSettings StandardViewSettings; do
+	# Show item info near icons
+	finder_plist "${view}:IconViewSettings:showItemInfo" bool true
+	# Enable snap-to-grid
+	finder_plist "${view}:IconViewSettings:arrangeBy" string grid
+	# Increase grid spacing
+	finder_plist "${view}:IconViewSettings:gridSpacing" integer 100
+	# Increase icon size
+	finder_plist "${view}:IconViewSettings:iconSize" integer 80
+done
 
 # Show item info to the right of the icons on the desktop
-/usr/libexec/PlistBuddy -c "Set DesktopViewSettings:IconViewSettings:labelOnBottom false" ~/Library/Preferences/com.apple.finder.plist
-
-# Enable snap-to-grid for icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
-
-# Increase grid spacing for icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 100" ~/Library/Preferences/com.apple.finder.plist
-
-# Increase the size of icons on the desktop and in other icon views
-/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
-/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 80" ~/Library/Preferences/com.apple.finder.plist
+finder_plist "DesktopViewSettings:IconViewSettings:labelOnBottom" bool false
 
 # Use list view in all Finder windows by default
 # Four-letter codes for the other view modes: `icnv`, `clmv`, `Flwv`
@@ -372,12 +366,6 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 # Don’t group windows by application in Mission Control
 # (i.e. use the old Exposé behavior instead)
 defaults write com.apple.dock expose-group-by-app -bool false
-
-# Disable Dashboard
-defaults write com.apple.dashboard mcx-disabled -bool true
-
-# Don’t show Dashboard as a Space
-defaults write com.apple.dock dashboard-in-overlay -bool true
 
 # Don’t automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false
@@ -546,12 +534,6 @@ defaults write com.apple.mail SpellCheckingBehavior -string "NoSpellCheckingEnab
 # Spotlight                                                                   #
 ###############################################################################
 
-# Hide Spotlight tray-icon (and subsequent helper)
-#sudo chmod 600 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
-# Disable Spotlight indexing for any volume that gets mounted and has not yet
-# been indexed before.
-# Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
-sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
 # Change indexing order and disable some search results
 # Yosemite-specific search results (remove them if you are using macOS 10.9 or older):
 # 	MENU_DEFINITION
@@ -639,12 +621,6 @@ defaults write com.apple.ActivityMonitor SortDirection -int 0
 
 # Enable the debug menu in Address Book
 defaults write com.apple.addressbook ABShowDebugMenu -bool true
-
-# Enable Dashboard dev mode (allows keeping widgets on the desktop)
-defaults write com.apple.dashboard devmode -bool true
-
-# Enable the debug menu in iCal (pre-10.8)
-defaults write com.apple.iCal IncludeDebugMenu -bool true
 
 # Use plain text mode for new TextEdit documents
 defaults write com.apple.TextEdit RichText -int 0
@@ -735,27 +711,18 @@ defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool t
 ###############################################################################
 
 for app in "Activity Monitor" \
-	"Address Book" \
 	"Calendar" \
 	"cfprefsd" \
 	"Contacts" \
 	"Dock" \
 	"Finder" \
-	"Google Chrome Canary" \
 	"Google Chrome" \
 	"Mail" \
 	"Messages" \
-	"Opera" \
 	"Photos" \
 	"Safari" \
-	"SizeUp" \
-	"Spectacle" \
 	"SystemUIServer" \
-	"Terminal" \
-	"Transmission" \
-	"Tweetbot" \
-	"Twitter" \
-	"iCal"; do
+	"Terminal"; do
 	killall "${app}" &> /dev/null
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."

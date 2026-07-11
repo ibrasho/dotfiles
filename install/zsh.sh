@@ -1,31 +1,21 @@
-# Test to see if zshell is installed.
-if [ -f /bin/zsh -o -f /usr/bin/zsh ]; then
-  ZSH_PATH="$(command -v zsh)"
+# shellcheck shell=bash
+# Ensure zsh is the default shell.
+# macOS ships zsh as the default since Catalina; this only matters if the
+# account was migrated from an older system or the shell was changed.
 
+# `|| true` matters: this is sourced under setup.sh's set -e, and a failing
+# command substitution in an assignment would abort before the guard below.
+ZSH_PATH="$(command -v zsh || true)"
+
+if [ -n "$ZSH_PATH" ]; then
   # Make sure zsh is in the allowed shells list
-  grep -q -F "$ZSH_PATH" /etc/shells || sudo sh -c "echo $ZSH_PATH >> /etc/shells"
+  grep -q -F "$ZSH_PATH" /etc/shells || echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
 
-  # Set the default shell to zsh if it isn't currently set to zsh
+  # Set the default shell to zsh if it isn't already
+  # (a mistyped chsh password must not abort the whole setup)
   if [ "$SHELL" != "$ZSH_PATH" ]; then
-    chsh -s "$ZSH_PATH"
+    chsh -s "$ZSH_PATH" || echo "chsh failed; run 'chsh -s $ZSH_PATH' manually"
   fi
 else
-  # If zsh isn't installed, get the platform of the current machine
-  platform=$(uname);
-  # If the platform is Linux, try an apt-get to install zsh and then recurse
-  if [[ $platform == 'Linux' ]]; then
-    if [[ -f /etc/redhat-release ]]; then
-    sudo yum install zsh
-    install_zsh
-    fi
-    if [[ -f /etc/debian_version ]]; then
-    sudo apt-get install zsh
-    install_zsh
-    fi
-  # If the platform is OS X, tell the user to install zsh :)
-  elif [[ $platform == 'Darwin' ]]; then
-    echo "We'll install zsh, then re-run this script!"
-    brew install zsh
-    exit
-  fi
+  echo "zsh not found; install it first (brew install zsh)"
 fi

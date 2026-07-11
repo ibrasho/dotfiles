@@ -3,35 +3,25 @@
 # Install packages
 apps=(
   1password
-  docker
+  docker-desktop
   font-fira-code
-  font-firacode-nerd-font
-  font-robotomono-nerd-font
+  font-fira-code-nerd-font
+  font-roboto-mono-nerd-font
   google-chrome
   google-cloud-sdk
   iterm2
-  java
   jetbrains-toolbox
   microsoft-office
   postman
   slack
   spotify
+  temurin
   visual-studio-code
   whatsapp
 )
 
-brew install --cask "${apps[@]}"
-
-# Quick Look Plugins (https://github.com/sindresorhus/quick-look-plugins)
-qlplugins=(
-  qlcolorcode
-  qlmarkdown
-  qlprettypatch
-  qlstephen
-  quicklook-csv
-  quicklook-json
-  suspicious-package
-  webpquicklook
-)
-
-brew install --cask "${qlplugins[@]}"
+# --adopt takes over apps already present in /Applications (hand-installed
+# Chrome/Slack/etc.) instead of erroring out; a failed cask must not abort
+# the rest of setup (this runs under setup.sh's set -e).
+brew install --cask --adopt "${apps[@]}" \
+  || echo "Some casks failed to install; continuing"

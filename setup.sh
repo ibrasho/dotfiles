@@ -5,9 +5,18 @@ set -e
 
 # Get the dotfiles directory's absolute path
 export DOTFILES="$HOME/.dotfiles"
-mkdir -p "$HOME/Tools"
 
 source "$DOTFILES/utils.sh"
+
+# Every prompt below reads from stdin — fail fast (and clearly) when there is
+# no terminal instead of dying on the first `read` with no explanation.
+if [ ! -t 0 ]; then
+  print_error "setup.sh needs an interactive terminal (its prompts read from stdin)" ""
+  exit 1
+fi
+
+# set -e exits silently; say where it happened.
+trap 'print_error "Setup failed at line $LINENO:" "$BASH_COMMAND"' ERR
 
 ###############################################################################
 # Copy files                                                                  #
@@ -16,7 +25,7 @@ source "$DOTFILES/utils.sh"
 # Warn user this script will overwrite current dotfiles
 while true; do
   print_question "Warning: this will overwrite your current dotfiles. Continue? [y/n] "
-  read -p "" yn
+  read -r yn
   case $yn in
     [Yy]* ) break;;
     [Nn]* ) exit;;
@@ -24,25 +33,22 @@ while true; do
   esac
 done
 
-DOTFILES_BACKUP="$HOME/.dotfiles_backup"
-BIN_BACKUP="$HOME/.bin_backup"
+# Timestamped subdir so re-runs never clobber an earlier backup of the
+# same filename (the backup can be the only copy).
+DOTFILES_BACKUP="$HOME/.dotfiles_backup/$(date +%Y%m%d-%H%M%S)"
 
-# Create dotfiles_old in homedir
 print_info "Creating $DOTFILES_BACKUP for backup of any existing dotfiles in $HOME"
 mkdir -p "$DOTFILES_BACKUP"
-
-print_info "Creating $BIN_BACKUP for backup of any existing bin in $HOME/bin"
-mkdir -p "$BIN_BACKUP"
-
-# Change to the dotfiles directory
-print_info "Changing to the $DOTFILES directory..."
 
 # Actual symlink stuff
 print_info "Creating symlinks"
 
 for file in "$DOTFILES/home"/.[^.]* "$DOTFILES/home"/*; do
   [ -e "$file" ] || continue
-  [ -f "$file" ] || continue
+  if [ ! -f "$file" ]; then
+    print_error "skipping $file (directories in home/ are not symlinked)" ""
+    continue
+  fi
 
   SOURCE_FILE="$file"
   TARGET_FILE="$HOME/$(basename "$file")"
@@ -77,14 +83,31 @@ fi
 
 
 ###############################################################################
-# dircolors                                                                   #
+# Claude Code config (~/.claude)                                              #
 ###############################################################################
 
-print_info "Installing dircolors"
-if [ ! -d "$HOME/Tools/dircolors" ]; then
-  git clone "https://github.com/gibbling666/dircolors.git" "$HOME/Tools/dircolors"
-  print_success "Installed dircolors"
+if [ ! -e "$HOME/.claude" ]; then
+  print_info "Installing Claude Code config from ibrasho/dotclaude"
+  # https here: on a fresh machine SSH keys/1Password may not be set up yet.
+  # Switch the remote to git@github.com:ibrasho/dotclaude.git afterwards.
+  git clone https://github.com/ibrasho/dotclaude "$HOME/.claude" \
+    || print_error "Failed to clone dotclaude; clone it manually" ""
+elif [ ! -d "$HOME/.claude/.git" ]; then
+  print_error "$HOME/.claude exists but is not a git clone of dotclaude; reconcile manually" ""
 fi
+
+###############################################################################
+# ~/.config tools (starship, mise)                                            #
+###############################################################################
+
+mkdir -p "$HOME/.config"
+safeSymlink "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml" "$DOTFILES_BACKUP"
+
+# mise only reads global config from ~/.config/mise/config.toml — the repo's
+# .mise.toml is not in any project's parent path, so without this link it
+# would never take effect.
+mkdir -p "$HOME/.config/mise"
+safeSymlink "$DOTFILES/.mise.toml" "$HOME/.config/mise/config.toml" "$DOTFILES_BACKUP"
 
 
 ###############################################################################
@@ -107,25 +130,34 @@ fi
 print_info "Configured iTerm to load config from $DOTFILES/iterm2"
 
 # Tell iTerm2 to use the custom preferences in the directory
-defaults write "com.googlecode.iterm2.plist" "LoadPrefsFromCustomFolder" -bool true
+defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
 
 # Specify the preferences directory
-defaults write "com.googlecode.iterm2.plist" "PrefsCustomFolder" -string "$DOTFILES/iterm2"
+defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$DOTFILES/iterm2"
 
 
 ###############################################################################
 # Cloudflared                                                                 #
 ###############################################################################
 
-print_info "Installing cloudflared"
+if command -v cloudflared >/dev/null 2>&1; then
+  print_info "Configuring cloudflared"
 
-mkdir -p "/usr/local/etc/cloudflared"
-if [ ! -f "/usr/local/etc/cloudflared/config.yaml" ]; then
-  ln -s "$DOTFILES/cloudflared/config.yaml" "/usr/local/etc/cloudflared/config.yaml"
-fi
+  # cloudflared reads per-user config from ~/.cloudflared (no sudo needed,
+  # unlike /usr/local/etc which is root-owned on modern macOS)
+  mkdir -p "$HOME/.cloudflared"
+  safeSymlink "$DOTFILES/cloudflared/config.yaml" "$HOME/.cloudflared/config.yaml" "$DOTFILES_BACKUP"
 
-if [ ! -f "$HOME/Library/LaunchAgents/com.cloudflare.cloudflared.plist" ]; then
-  cloudflared service install
+  # The service can land as a user LaunchAgent or (with proxy-dns on port 53)
+  # a root LaunchDaemon — check both before re-installing, and don't let a
+  # failure kill the rest of setup.
+  if [ ! -f "$HOME/Library/LaunchAgents/com.cloudflare.cloudflared.plist" ] \
+     && [ ! -f "/Library/LaunchDaemons/com.cloudflare.cloudflared.plist" ]; then
+    sudo cloudflared service install \
+      || print_error "cloudflared service install failed; run it manually" ""
+  fi
+else
+  print_info "cloudflared not installed; skipping (brew install cloudflared)"
 fi
 
 
@@ -136,7 +168,7 @@ fi
 source "$DOTFILES/install/zsh.sh"
 
 ###############################################################################
-# Reload zsh settings                                                         #
+# Done                                                                        #
 ###############################################################################
 
-zsh
+print_success "Setup complete. Restart your terminal (or run 'exec zsh') to load the new settings."

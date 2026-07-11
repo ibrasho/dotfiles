@@ -1,10 +1,9 @@
-# Mise configuration file
-# This file manages runtime versions for various languages
-# Copy this to ~/.config/mise/config.toml or your project root as .mise.toml
+# Mise global configuration
+# Symlinked to ~/.config/mise/config.toml by setup.sh (mise only reads global
+# config from there — this file has no effect from inside the repo alone).
 #
-# After installing mise, run:
+# After changing tools, run:
 #   mise install    # Install all tools defined in this file
-#   mise use -g     # Use these versions globally
 #
 # See: https://mise.jdx.dev/
 
@@ -26,7 +25,7 @@ go = "latest"
 # php = "8.5"
 
 [settings]
-# Use all available cores for parallel installation
+# Number of parallel install jobs
 jobs = 4
 
 # Enable legacy version file support (.nvmrc, .ruby-version, etc.)

@@ -9,14 +9,26 @@ if ! command -v brew >/dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-# Make sure we’re using the latest Homebrew
-brew update
+# The installer does NOT put brew on the running process's PATH (it only
+# prints "next steps"), so on a fresh machine every brew call below would
+# exit 127 and set -e would kill the whole setup right here.
+if ! command -v brew >/dev/null 2>&1; then
+  if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+fi
 
-# Upgrade any already-installed formulae
-brew upgrade
+# Make sure we’re using the latest Homebrew
+brew update || echo "brew update failed; continuing with existing state"
+
+# Upgrade any already-installed formulae — a single failing formula must not
+# abort the entire setup (this runs under setup.sh's set -e)
+brew upgrade || echo "brew upgrade had failures; continuing"
 
 apps=(
-  bash-completion2
+  bash-completion@2
 
   zsh
   zsh-completions
@@ -31,7 +43,6 @@ apps=(
   tmux
   wget
 
-  gpg
   gnupg
 
   curl
@@ -43,6 +54,7 @@ apps=(
   jq
   source-highlight
   shellcheck         # Shell script linter
+  difftastic         # Syntax-aware diffs (gitconfig's diff.external)
 
   # Version manager - replaces rbenv, nvm, etc.
   mise
@@ -57,8 +69,11 @@ apps=(
   lazygit            # TUI for git
   git-delta          # Better git diff
   ripgrep            # Better grep (rg)
+  fzf                # Fuzzy finder (ctrl-r/ctrl-t, zoxide's zi)
+  zsh-autosuggestions     # Fish-style inline history suggestions
+  zsh-syntax-highlighting # Command coloring as you type
 
-  aws-shell
+  awscli
 
   direnv
 )
