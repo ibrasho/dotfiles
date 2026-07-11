@@ -1,7 +1,6 @@
 [core]
 	editor = vim
 	abbrev = 12
-	attributesfile = ~/.gitattributes
 	excludesfile = ~/.gitignore
 	autocrlf = input
 	mergeoptions = --no-edit
@@ -17,8 +16,10 @@
 	# Branch
 	br = branch
 	branch-name = rev-parse --abbrev-ref HEAD
-	branch-diff = diff master...HEAD
-	branch-files = "!git diff master...HEAD --name-status | sed '/^D/d ; s/^.\\s\\+//'"
+	# Resolve the remote's default branch (main/master) instead of hardcoding
+	default-branch = "!f() { b=$(git symbolic-ref -q --short refs/remotes/origin/HEAD); b=${b#origin/}; echo ${b:-main}; }; f"
+	branch-diff = "!git diff $(git default-branch)...HEAD"
+	branch-files = "!git diff $(git default-branch)...HEAD --name-status | sed '/^D/d ; s/^.\\s\\+//'"
 
 	# Commit
 	c = commit -s
@@ -46,7 +47,9 @@
 	cp = cherry-pick
 
 	# Diff
-	d = diff --color-words
+	d = diff
+	dd = diff --no-ext-diff                      # Bypass difftastic (delta renders instead)
+	dw = diff --no-ext-diff --color-words
 	dc = diff --cached
 	df = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
 
@@ -55,13 +58,13 @@
 
 	# Pull
 	pl = pull
-	plom = pull origin master
-	plum = pull upstream master
-	preb = !git fetch upstream && git rebase upstream/master
+	plom = "!git pull origin $(git default-branch)"
+	plum = "!git pull upstream $(git default-branch)"
+	preb = "!git fetch upstream && git rebase upstream/$(git default-branch)"
 
 	# Push
 	p = push
-	pom = push origin master
+	pom = "!git push origin $(git default-branch)"
 	poh = push origin head
 
 	# Stash
@@ -77,23 +80,16 @@
 	lc = shortlog --summary --numbered           # List contributors
 
 	# Reset
-	unstage = reset HEAD --                      # Mixed reset (affects HEAD and Index)
+	# (unstage/uncommit are defined in the Commit section above; an alias
+	# named `reset` would be silently ignored — git aliases can't shadow
+	# builtin commands.)
 	undo = reset --soft HEAD~1                   # Undo last commit (affects HEAD only)
-	reset = reset --hard HEAD~1                  # Remove last commit (from HEAD, Index and Working Dir)
 
 	# Remote
 	r = remote -v
 
 	# Submodules
 	subpl = submodule update --init --recursive
-
-	# codereview
-	change = codereview change
-	gofmt = codereview gofmt
-	mail = codereview mail
-	pending = codereview pending
-	submit = codereview submit
-	sync = codereview sync
 
 	# Misc
 	publish = "!git push --set-upstream origin $(git branch-name)"
@@ -155,18 +151,6 @@
 	commit = yellow bold
 	whitespace = red reverse
 
-[color "diff-highlight"]
-	oldNormal = red bold
-	oldHighlight = red bold 52
-	newNormal = green bold
-	newHighlight = green bold 22
-
-[color "status"]
-	oldNormal = red bold
-	oldHighlight = red bold 52
-	newNormal = green bold
-	newHighlight = green bold 22
-
 [pretty]
 	custom = "%C(magenta)%h%C(red)%d %C(yellow)%ar %C(green)%s %C(yellow)(%an)"
 	#                     │        │            │            │             └─ author name
@@ -176,79 +160,90 @@
 	#                     └─ hash (abbreviated)
 
 [help]
-	# Correct typos
-	autocorrect = 1
+	# Suggest the corrected command and ask before running it
+	# (a numeric value would AUTO-RUN the guess after N deciseconds)
+	autocorrect = prompt
 
+# (git:// protocol was disabled by GitHub in 2022 — shorthands use https/ssh)
 [url "git@github.com:"]
 	insteadOf = "gh:"
 	pushInsteadOf = "github:"
-	pushInsteadOf = "git://github.com/"
 
-[url "git://github.com/"]
+[url "https://github.com/"]
 	insteadOf = "github:"
 
 [url "git@gist.github.com:"]
 	insteadOf = "gst:"
 	pushInsteadOf = "gist:"
-	pushInsteadOf = "git://gist.github.com/"
 
-[url "git://gist.github.com/"]
+[url "https://gist.github.com/"]
 	insteadOf = "gist:"
 
 # Push easily http://stackoverflow.com/a/23918418/89484
 [push]
-	# Make `git push` automatically push relevant
-	# annotated tags when pushing branches out
-	followTags = true
-	default = current
+    # Make `git push` automatically push relevant
+    # annotated tags when pushing branches out
+    followTags = true
+    default = current
 
 # Use separate file for username / github token / etc
 [include]
-	path = ~/.gitconfig.local
+    path = ~/.gitconfig.local
 
 [filter "lfs"]
-	clean = git lfs clean %f
-	smudge = git lfs smudge %f
-	required = true
+    clean = git lfs clean %f
+    smudge = git lfs smudge %f
+    required = true
 
 [fetch]
-	prune = true
+    prune = true
 
 [commit]
-	gpgsign = true
+    gpgsign = true
 
 # User configuration is loaded from ~/.gitconfig.local
 # See README.md for template
 
 [gpg]
-	format = ssh
+    format = ssh
 
 [gpg "ssh"]
-	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+    program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 
 [tag]
-	forceSignAnnotated = true
+    forceSignAnnotated = true
 
 [pull]
-	rebase = true
+    rebase = true
 
 [init]
-	defaultBranch = main
+    defaultBranch = main
 
 [interactive]
-	diffFilter = "delta --color-only --features=interactive"
+    diffFilter = "delta --color-only --features=interactive"
 
 # Git mergetool
 [merge]
-	tool = opendiff
-    conflictstyle = diff3
+    tool = opendiff
+    conflictstyle = zdiff3        # like diff3 but elides lines common to both sides
 
-[diff "bin"]
-	# Use `hexdump` to diff binary files
-	textconv = hexdump -v -C
+[rebase]
+    autostash = true              # Stash/unstash dirty worktree around rebase
+    autosquash = true             # Auto-reorder fixup!/squash! commits
+
+[push]
+    autoSetupRemote = true        # First push sets upstream automatically
+
+[commit]
+    verbose = true                # Show the diff in the commit message editor
 
 [diff]
-    colorMoved = default
+    external = difft              # Syntax-aware diffs for `git diff`
+    algorithm = histogram         # Better hunk boundaries for internal diffs
+
+[diff "bin"]
+    # Use `hexdump` to diff binary files
+    textconv = hexdump -v -C
 
 [rerere]
     enabled = true              # Reuse recorded resolution

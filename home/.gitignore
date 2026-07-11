@@ -1,43 +1,25 @@
-private
+# Global gitignore (core.excludesfile) — OS and editor junk ONLY.
+# Project-type patterns (node_modules, *.log, build artifacts, ...) belong in
+# each project's own .gitignore: keeping them here can silently hide files
+# that a work repo legitimately tracks.
 
 # Git credential file
 .gitconfig.local
 
-# Folder view configuration files
+# macOS
 .DS_Store
-Desktop.ini
-
-# Thumbnail cache files
 ._*
-*~
-Thumbs.db
-
-# Files that might appear on external disks
 .Spotlight-V100
 .Trashes
 
-# Compiled Python files
-*.pyc
-
-# npm & bower
-bower_components
-node_modules
-npm-debug.log
-
-# IDEs stuff
-.idea
-
-# Files
-*.class
-*.exe
-*.o
-*.so
-*.7z
-*.dmg
-*.iso
-*.log
-*.sqlite
-._*
+# Windows
+Desktop.ini
+Thumbs.db
 ehthumbs.db
 
+# Editor leftovers
+*~
+.idea
+
+# Claude Code machine-local settings
 .claude/settings.local.json
