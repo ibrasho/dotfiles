@@ -16,135 +16,90 @@ git clone https://github.com/ibrasho/dotfiles ~/.dotfiles
 ~/.dotfiles/setup.sh
 ```
 
-## What does it do?
+### What setup.sh does (and needs)
 
-This dotfiles repository provides:
+The script is interactive and safe to re-run. Be aware that it will:
 
-- **Modern Shell Configuration**: Optimized Zsh setup with Starship prompt
-- **Version Management**: Mise for managing Node.js, Ruby, Python, Go, and more
-- **Enhanced CLI Tools**: Modern replacements for traditional Unix tools
-- **Development Tools**: Git configuration, Vim setup, and various utilities
-- **Automated Installation**: Scripts for Homebrew packages and system configuration
+- Prompt before replacing each existing dotfile (backups go to a timestamped
+  `~/.dotfiles_backup/<date>/` directory)
+- Symlink everything in `home/` into `~`, plus `ssh/config`, the gnupg
+  configs, `starship.toml` and the mise config into `~/.config`
+- Clone [ibrasho/dotclaude](https://github.com/ibrasho/dotclaude) to `~/.claude`
+- Install Homebrew (needs Xcode Command Line Tools and sudo) and a full
+  suite of formulae and casks — including large apps like Docker Desktop and
+  Microsoft Office; prune `install/brew-cask.sh` first if you don't want them
+- Point iTerm2 at `iterm2/` for its preferences
+- Ask for your password to change the default shell (`chsh`)
 
-### Modern CLI Tools Included
+macOS system defaults are a **separate, deliberate step**:
 
-- **[mise](https://mise.jdx.dev/)** - Universal version manager (replaces nvm, rbenv, pyenv, etc.)
-- **[eza](https://eza.rocks/)** - Modern `ls` replacement with colors and icons
-- **[bat](https://github.com/sharkdp/bat)** - Enhanced `cat` with syntax highlighting
-- **[zoxide](https://github.com/ajeetdsouza/zoxide)** - Smarter `cd` that learns your habits
-- **[fd](https://github.com/sharkdp/fd)** - Fast and user-friendly alternative to `find`
-- **[ripgrep](https://github.com/BurntSushi/ripgrep)** - Extremely fast grep alternative
-- **[lazygit](https://github.com/jesseduffield/lazygit)** - Terminal UI for git
-- **[delta](https://github.com/dandavison/delta)** - Better git diff viewer
-- **[procs](https://github.com/dalance/procs)** - Modern `ps` replacement
-- **[direnv](https://direnv.net/)** - Load environment variables based on directory
-- **[starship](https://starship.rs/)** - Fast, customizable shell prompt
+```bash
+./macos/set-defaults.sh   # review it first — it changes a lot
+```
+
+For a brand-new machine, `setup-new-machine.sh` documents the full sequence
+(Xcode CLT → clone → defaults → setup). Copy/paste it section by section;
+don't run it blindly.
+
+## What's inside
+
+- **Fast Zsh setup**: ~100ms startup. Starship prompt, cached completions,
+  fzf, autosuggestions, syntax highlighting, zoxide
+- **Version management**: mise for Ruby/Python/Go; PHP and Node.js are
+  managed by [Herd](https://herd.laravel.com/) (nvm is lazy-loaded — it never
+  taxes shell startup)
+- **Git**: difftastic for syntax-aware `git diff` (use `git dd` for a
+  delta-rendered classic diff), delta as pager, SSH commit signing via
+  1Password, branch-agnostic aliases (`git plom` works on main *and* master)
+- **Modern CLI tools**: eza, bat, fd, ripgrep, procs, lazygit, delta, direnv
+- **Minimal vim**: plugin-free vimrc for quick terminal edits
+- **Hardened ssh/gpg**: pinned identities (`IdentitiesOnly`), hashed
+  known_hosts, no global agent forwarding
 
 ## Customize
 
-### Local Settings
+### Local settings (never committed)
 
-The dotfiles can be easily extended to suit additional local requirements by using the following files:
+| File | Purpose |
+|---|---|
+| `~/.gitconfig.local` | Git identity: `user.name`, `user.email`, `signingkey` |
+| `~/.zsh.local` | Machine-specific zsh config; loaded **last**, overrides everything |
 
-#### `~/.gitconfig.local`
-
-If the `~/.gitconfig.local` file exists, it will be automatically included after the configurations from `~/.gitconfig`, thus, allowing its content to overwrite or add to the existing git configurations.
-
-**IMPORTANT**: You MUST create `~/.gitconfig.local` with your personal information. Use this template:
+`~/.gitconfig.local` template:
 
 ```ini
 [user]
 	name = Your Name
 	email = your.email@example.com
 	signingkey = YOUR_SSH_PUBLIC_KEY_OR_GPG_KEY
-
-[http]
-	cookiefile = ~/.gitcookies
-
-# Any GitHub repo with your username should be checked out r/w by default
-# http://rentzsch.tumblr.com/post/564806957/public-but-hackable-git-submodules
-[url "git@github.com:YOUR_USERNAME/"]
-	insteadOf = "git://github.com/YOUR_USERNAME/"
 ```
 
-**For 1Password SSH Signing** (recommended):
-1. Enable 1Password SSH agent in 1Password settings
-2. Copy your SSH public key: `cat ~/.ssh/id_rsa.pub` (or your 1Password SSH key)
-3. Use that as your `signingkey` in the template above
+For 1Password SSH signing, enable the 1Password SSH agent and use your SSH
+public key as `signingkey` (see `[gpg "ssh"]` in `.gitconfig`).
 
-**For GPG Signing** (traditional):
-1. Generate a GPG key: `gpg --full-generate-key`
-2. Get your key ID: `gpg --list-secret-keys --keyid-format LONG`
-3. Use the long key ID as your `signingkey`
+### Version management
 
-#### `~/.zsh.local`
+- **PHP + Node.js**: Herd. The shell resolves Herd's default node version
+  directly onto PATH; `nvm` and per-directory `.nvmrc` switching load lazily
+  on first use.
+- **Ruby, Python, Go**: mise, configured globally via `.mise.toml`
+  (symlinked to `~/.config/mise/config.toml`). Run `mise install` after
+  changing it.
 
-Local Zsh configuration for machine-specific settings that shouldn't be in the repository.
+### iTerm2
 
-### Version Management
+`setup.sh` points iTerm2's custom-preferences folder at `iterm2/`. To sync
+your current settings into the repo: iTerm2 → Settings → General →
+Settings tab → "Save Current Settings to Folder".
 
-This setup uses a hybrid approach for managing language versions:
-
-#### **Node.js & PHP** - Managed by Herd
-- **Node.js**: Herd provides its own nvm installation for Node.js version management
-- **PHP**: Herd manages PHP versions (8.4, 8.5, etc.)
-- Herd's integrations are automatically loaded in your shell
-
-#### **Ruby, Python, Go** - Managed by Mise
-
-After installation, set up your language runtimes with mise:
+## Everyday commands
 
 ```bash
-# Install mise (already included in brew.sh)
-brew install mise
-
-# Install recommended versions from .mise.toml
-mise install
-
-# Or install specific versions globally
-mise use -g ruby@latest
-mise use -g python@latest
-mise use -g go@latest
-
-# List installed versions
-mise list
-
-# List available versions for a tool
-mise ls-remote ruby
-```
-
-Mise automatically activates the correct versions based on:
-- `.mise.toml` files in project directories
-- Legacy version files (`.ruby-version`, `.python-version`, etc.)
-- Global configuration at `~/.config/mise/config.toml`
-
-**Note:** If you need Node.js outside of Herd projects, you can either:
-1. Use Herd's nvm: `nvm install <version>`
-2. Or enable mise for Node.js by uncommenting `node = "lts"` in `.mise.toml`
-
-## Modern CLI Tools Usage
-
-After installation, you'll have access to enhanced commands:
-
-```bash
-# eza replaces ls (with fallback to traditional ls)
-ls          # Enhanced directory listing with icons
-ll          # Long format listing
-la          # List all files including hidden
-lt          # Tree view
-lta         # Tree view with all files
-
-# bat replaces cat (with fallback)
-cat file.txt        # Syntax-highlighted output
-less file.txt       # Paginated viewing with highlighting
-
-# zoxide replaces cd
-z <partial-path>    # Jump to frequently used directories
-zi                  # Interactive directory selection
-
-# fd replaces find
-fd <pattern>        # Much faster and more intuitive than find
-
-# lazygit for git operations
-lazygit             # Terminal UI for git
+z <dir>        # zoxide: jump to a frecent directory (zi = interactive)
+ctrl-r         # fzf fuzzy history search
+ll / la / lt   # eza listings (long / all / tree)
+cat file       # bat with syntax highlighting
+lazygit        # git TUI
+git dd         # classic line diff (delta) instead of difftastic
+git plom       # pull origin <default branch> — main or master, resolved live
 ```
