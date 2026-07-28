@@ -72,6 +72,9 @@ alias gs='git status'
 alias gd='git diff'
 alias gdc='git diff --cached'
 alias gco='git checkout'
+alias gl='git log'
+alias gr='git restore'
+alias grs='git restore --staged'
 
 # View HTTP traffic
 alias sniff="sudo ngrep -W byline -d 'en0' -t '^(GET|POST) ' 'tcp and port 80'"
