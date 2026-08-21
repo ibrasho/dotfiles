@@ -54,8 +54,9 @@ fi
 unsetopt RM_STAR_SILENT
 
 # load auto completion
-# Extra completions (Homebrew) must be in fpath before compinit runs
-fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+# Extra completions must be in fpath before compinit runs. The second dir holds
+# `_dcg` and `_lerd`.
+fpath=(/opt/homebrew/share/zsh/site-functions "$HOME/.local/share/zsh/site-functions" $fpath)
 
 # Do a full (slow) compinit only if the dump is older than 24h; otherwise
 # trust the cache with -C and skip the security audit. The `touch` is load-
@@ -201,3 +202,12 @@ fi
 # Syntax highlighting must be sourced at the very end of .zshrc
 [[ -o zle && -t 0 ]] && [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# pnpm
+export PNPM_HOME="/Users/ibrasho/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
+

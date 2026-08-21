@@ -212,6 +212,10 @@
 
 [gpg "ssh"]
     program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+    # Without this, git verifies nothing and reports every signed commit as
+    # "No signature" — indistinguishable from a genuinely unsigned one.
+    # The file holds the key material and stays out of this repo.
+    allowedSignersFile = ~/.ssh/allowed_signers
 
 [tag]
     forceSignAnnotated = true

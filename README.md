@@ -97,7 +97,7 @@ Settings tab → "Save Current Settings to Folder".
 ```bash
 z <dir>        # zoxide: jump to a frecent directory (zi = interactive)
 ctrl-r         # fzf fuzzy history search
-ll / la / lt   # eza listings (long / all / tree)
+ls / ll / lt   # eza listings, hidden files included (short / long / tree)
 cat file       # bat with syntax highlighting
 lazygit        # git TUI
 git dd         # classic line diff (delta) instead of difftastic

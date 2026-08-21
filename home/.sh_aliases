@@ -20,11 +20,9 @@ alias hosts='sudo $EDITOR /etc/hosts'
 
 # Use eza (modern ls) if available, otherwise fallback to ls/gls
 if command -v eza >/dev/null 2>&1; then
-  alias ls='eza --icons --group-directories-first'
-  alias ll='eza --icons --group-directories-first -l'
-  alias la='eza --icons --group-directories-first -la'
-  alias lt='eza --icons --group-directories-first --tree'
-  alias lta='eza --icons --group-directories-first --tree -a'
+  alias ls='eza --icons --group-directories-first -A'
+  alias ll='eza --icons --group-directories-first -lA'
+  alias lt='eza --icons --group-directories-first --tree -A'
 else
   # Fallback to traditional ls
   hash gls >/dev/null 2>&1 || alias gls="ls"

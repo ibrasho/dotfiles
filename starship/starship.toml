@@ -8,3 +8,27 @@ scan_timeout = 100
 
 # Give slow commands (git status on big repos, version lookups) more headroom.
 command_timeout = 1000
+
+# Timestamp of when the prompt was drawn, right-aligned (zsh RPROMPT) so it never
+# competes with the path/git segments for width. Claiming $time here also removes
+# it from the default left format — starship renders a module in one side only —
+# so there is no need to override `format` to avoid a duplicate.
+right_format = "$time"
+
+[time]
+# The module is enabled but does nothing without this: it ships disabled = true.
+disabled = false
+# Default time_format is "%T" (clock only); this prompt wants the date too.
+time_format = "%Y-%m-%d %H:%M:%S"
+# Default format is "at [$time]($style) " — the "at" prefix and padding only make
+# sense inline on the left, not right-aligned against the terminal edge.
+format = "[$time]($style)"
+style = "dimmed white"
+
+# The built-in php module is used as-is. It was disabled and replaced by a
+# `custom.php` block while this machine ran lerd, because lerd's `php` on PATH was
+# a shim that exec'd into a Podman container (~1.1s per call, over command_timeout,
+# so every prompt in a PHP project logged a starship::utils warning). Back on Herd
+# the shim is gone: `php -r 'echo PHP_VERSION;'` answers in ~30ms, well inside the
+# timeout. The built-in module is also the more correct of the two, because it
+# follows `herd isolate` per-site PHP versions, which the custom block could not.
