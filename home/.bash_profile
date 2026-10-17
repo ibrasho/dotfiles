@@ -3,9 +3,18 @@
 # path_helper BEFORE this file and would demote anything set earlier.
 # Interactive config lives in .bashrc, sourced at the bottom.
 
-# Homebrew
-if [ -x /opt/homebrew/bin/brew ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew — hardcoded copy of `brew shellenv bash` output (Homebrew 7.0.9)
+# instead of eval'ing it: that forks brew (~10ms) on every login shell, the
+# same reason .sh_path hardcodes /opt/homebrew. Re-sync if a brew upgrade
+# changes what `brew shellenv` prints.
+if [ -d /opt/homebrew/bin ]; then
+  export HOMEBREW_PREFIX="/opt/homebrew"
+  export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+  export HOMEBREW_REPOSITORY="/opt/homebrew"
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin${PATH+:$PATH}"
+  # Trailing ':' stripped, leading ':' ensured: keeps man's default search path.
+  [ -z "${MANPATH-}" ] || { export MANPATH="${MANPATH%"${MANPATH##*[!:]}"}"; export MANPATH=":${MANPATH#"${MANPATH%%[!:]*}"}"; }
+  export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}"
 elif [ -x /usr/local/bin/brew ]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi

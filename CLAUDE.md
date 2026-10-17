@@ -36,7 +36,7 @@ There is no test runner. Use these:
 shellcheck setup.sh utils.sh install/*.sh remote-setup.sh   # currently clean
 shellcheck --shell=bash home/.sh_aliases                    # see note below
 bash -n home/.bashrc home/.bash_profile && zsh -n home/.zshrc  # syntax-only
-/usr/bin/time -p /opt/homebrew/bin/bash -l -i -c exit       # bash (secondary) ~150ms
+/usr/bin/time -p /opt/homebrew/bin/bash -l -i -c exit       # bash (secondary) ~130ms
 /usr/bin/time -p zsh -i -c exit                             # startup budget
 ```
 
@@ -53,7 +53,7 @@ The single thing worth understanding before editing: **load order**. It is split
 across five files and each split is deliberate.
 
 ```
-zsh login    → home/.zprofile   PATH prepends only (Homebrew shellenv, cargo,
+zsh login    → home/.zprofile   PATH prepends only (Homebrew env, cargo,
                                 JetBrains). These MUST be here, not in
                                 .zshenv: macOS /etc/zprofile runs path_helper
                                 after .zshenv and would demote them.
@@ -91,7 +91,10 @@ Rules that follow from this:
 protect that. Do not "clean these up":
 
 - `.sh_path` hardcodes `/opt/homebrew` instead of calling `brew --prefix`
-  (a fork costs 50–100ms every shell).
+  (a fork costs 50–100ms every shell). Likewise `.zprofile`/`.bash_profile`
+  carry a hardcoded copy of `brew shellenv` output instead of eval'ing it
+  (~20ms per login shell). If a brew upgrade changes that output, re-sync the
+  copy; don't go back to the eval.
 - nvm is **lazy-loaded**. Herd's default node goes on PATH by resolving
   `$NVM_DIR/alias/default` with pure-zsh globbing; `nvm.sh` is sourced only when
   `nvm` is called or a `.nvmrc` directory is entered. Eagerly sourcing it costs
