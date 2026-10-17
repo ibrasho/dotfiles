@@ -148,6 +148,7 @@ formula must not abort the whole run.
 |---|---|
 | `~/.gitconfig.local` | Git identity: `user.name`, `user.email`, `signingkey`. Included by `.gitconfig`; template in README. |
 | `~/.zsh.local` / `~/.bash.local` | Machine-specific config; sourced last, overrides everything. |
+| `~/.ssh/config.local` | Private SSH hosts (work servers, IPs). `Include`d at the top of `ssh/config`, which is public. |
 | `.claude/settings.local.json` | Local Claude Code permissions. |
 
 These are listed in the repo's own `.gitignore` (not just the global one)

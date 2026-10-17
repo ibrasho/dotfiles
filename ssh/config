@@ -1,6 +1,11 @@
 # Specific hosts first: ssh uses the FIRST obtained value per option,
 # so Host * must stay at the bottom.
 
+# Private hosts (work servers, IPs) live in ~/.ssh/config.local, NOT here —
+# this repo is public. Must stay above every Host line: an Include inside a
+# Host block only applies to that host. A missing file is silently skipped.
+Include ~/.ssh/config.local
+
 Host github.com
 	Hostname ssh.github.com
 	User git
