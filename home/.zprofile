@@ -9,9 +9,6 @@ elif [ -x /usr/local/bin/brew ]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# Flutter
-[ -d "$HOME/Code/flutter/bin" ] && PATH="$HOME/Code/flutter/bin:$PATH"
-
 # Rust/Cargo
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
