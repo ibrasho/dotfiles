@@ -50,11 +50,42 @@ for file in "$DOTFILES/home"/.[^.]* "$DOTFILES/home"/*; do
     continue
   fi
 
+  # .gitconfig gets an include stub instead of a symlink (see below).
+  [ "$(basename "$file")" = ".gitconfig" ] && continue
+
   SOURCE_FILE="$file"
   TARGET_FILE="$HOME/$(basename "$file")"
 
   safeSymlink "$SOURCE_FILE" "$TARGET_FILE" "$DOTFILES_BACKUP"
 done
+
+# ~/.gitconfig must be a real file, not a symlink: actions/checkout (on the
+# self-hosted runner) "copies" it into a temp HOME with @actions/io, which
+# re-creates symlinks instead of copying, so its `git config --global --add
+# safe.directory` writes went through the link into home/.gitconfig, 2 lines
+# per job (1,579 lines before this). With a stub, those writes hit the copy.
+GITCONFIG_STUB="# Real config: ~/.dotfiles/home/.gitconfig (included below). This file is
+# deliberately NOT a symlink -- see the .gitconfig note in ~/.dotfiles/setup.sh.
+# \`git config --global\` writes land here, outside the repo.
+[include]
+	path = ~/.dotfiles/home/.gitconfig"
+if [ "$(readlink "$HOME/.gitconfig" 2>/dev/null)" = "$DOTFILES/home/.gitconfig" ]; then
+  # The old symlink holds nothing of its own; replace it silently.
+  rm -f "$HOME/.gitconfig"
+fi
+if [ ! -e "$HOME/.gitconfig" ]; then
+  printf '%s\n' "$GITCONFIG_STUB" > "$HOME/.gitconfig"
+  print_success "(include stub created) $HOME/.gitconfig"
+elif ! grep -qF "path = ~/.dotfiles/home/.gitconfig" "$HOME/.gitconfig"; then
+  ask_for_confirmation "'$HOME/.gitconfig' exists without the dotfiles include, move to $DOTFILES_BACKUP?"
+  if answer_is_yes; then
+    mv "$HOME/.gitconfig" "$DOTFILES_BACKUP/"
+    printf '%s\n' "$GITCONFIG_STUB" > "$HOME/.gitconfig"
+    print_success "(file backup + include stub) $HOME/.gitconfig"
+  else
+    print_error "$HOME/.gitconfig" "(skipped)"
+  fi
+fi
 
 if [ ! -d "$HOME/.ssh" ]; then
   mkdir -p "$HOME/.ssh"
