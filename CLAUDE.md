@@ -35,7 +35,8 @@ There is no test runner. Use these:
 ```bash
 shellcheck setup.sh utils.sh install/*.sh remote-setup.sh   # currently clean
 shellcheck --shell=bash home/.sh_aliases                    # see note below
-zsh -n home/.zshrc && bash -n home/.profile                 # syntax-only check
+bash -n home/.bashrc home/.bash_profile && zsh -n home/.zshrc  # syntax-only
+/usr/bin/time -p /opt/homebrew/bin/bash -l -i -c exit       # bash (secondary) ~150ms
 /usr/bin/time -p zsh -i -c exit                             # startup budget
 ```
 
@@ -53,12 +54,17 @@ across five files and each split is deliberate.
 
 ```
 zsh login    → home/.zprofile   PATH prepends only (Homebrew shellenv, cargo,
-                                flutter, JetBrains). These MUST be here, not in
+                                JetBrains). These MUST be here, not in
                                 .zshenv: macOS /etc/zprofile runs path_helper
                                 after .zshenv and would demote them.
 zsh interactive → home/.zshrc   zsh options, compinit, then sources ~/.profile,
                                 then tool init (mise/direnv/zoxide/starship/fzf).
-bash login   → home/.bash_profile  sources ~/.profile + ~/.bash_prompt.
+bash login   → home/.bash_profile  PATH prepends (mirrors .zprofile), then
+                                sources .bashrc (or just .profile if non-interactive).
+bash interactive → home/.bashrc  shopts, bash-completion, sources ~/.profile, tool
+                                init, PATH dedupe, then ~/.bash.local last.
+                                BASH_COMPLETION_COMPAT_IGNORE skips gdal's 53 eager
+                                completion files (~600ms) -- keep it.
 
 both shells  → home/.profile    Cross-shell hub. Sources, in order:
                                   .sh_path → .sh_exports → .sh_functions → .sh_aliases
@@ -107,7 +113,8 @@ What gets linked where:
 
 | Source | Target |
 |---|---|
-| every **file** in `home/` (dirs are skipped) | `~/` |
+| every **file** in `home/` (dirs are skipped) except `.gitconfig` | `~/` |
+| `home/.gitconfig` | `~/.gitconfig` is a real **include stub**, not a symlink (see below) |
 | `ssh/config` | `~/.ssh/config` |
 | `gnupg/*` | `~/.gnupg/` |
 | `starship/starship.toml` | `~/.config/starship.toml` |
@@ -115,6 +122,14 @@ What gets linked where:
 
 `.mise.toml` only works via that symlink — mise reads global config solely from
 `~/.config/mise/config.toml`, and the repo isn't in any project's parent path.
+
+`~/.gitconfig` must NOT be a symlink. The self-hosted GitHub Actions runner on
+this machine runs actions/checkout, which copies `~/.gitconfig` to a temp HOME
+with `@actions/io` — and that re-creates symlinks rather than copying. Its
+`git config --global --add safe.directory` (twice per job) then wrote through
+the link into `home/.gitconfig` (1,579 lines). The stub `[include]`s the repo
+file, so those writes hit the copy. `git config --global` writes now land in
+the stub, outside the repo — move anything worth keeping into `home/.gitconfig`.
 
 `setup.sh` also clones `ibrasho/dotclaude` to `~/.claude` and installs `dcg`
 (destructive-command guard) *after* that clone, so its installer can register a
@@ -132,7 +147,7 @@ formula must not abort the whole run.
 | File | Purpose |
 |---|---|
 | `~/.gitconfig.local` | Git identity: `user.name`, `user.email`, `signingkey`. Included by `.gitconfig`; template in README. |
-| `~/.zsh.local` | Machine-specific zsh; sourced last, overrides everything. |
+| `~/.zsh.local` / `~/.bash.local` | Machine-specific config; sourced last, overrides everything. |
 | `.claude/settings.local.json` | Local Claude Code permissions. |
 
 These are listed in the repo's own `.gitignore` (not just the global one)
@@ -150,8 +165,10 @@ These apply to any shell command run in this repo's configured environment:
 - **GNU coreutils shadow the BSD ones** — `stat`, `sed`, etc. come from
   `coreutils/libexec/gnubin`, which `.sh_path` prepends. Flags differ. This is
   why the `fs` alias hardcodes `/usr/bin/stat`.
-- **`NO_CLOBBER` is set** in interactive zsh, so `>` onto an existing file
-  fails. Use `>|` to force.
+- **zsh is tuned to behave like bash** (block at the top of `.zshrc`): CLOBBER
+  on, NOMATCH/EQUALS/BRACE_CCL/RC_QUOTES/CORRECT/EXTENDED_GLOB off,
+  INTERACTIVE_COMMENTS on. Bash-syntax commands behave the same in both;
+  don't re-enable these without a reason, they were the source of daily errors.
 - `rm` is aliased to `rm -I -v` and `mv`/`cp` to verbose variants.
 - `fd` is installed but deliberately **not** aliased to `find` (incompatible CLI).
 
