@@ -2,11 +2,17 @@
 typeset -U path PATH fpath FPATH
 
 # General
-setopt BRACE_CCL          # Allow brace character class list expansion.
-setopt RC_QUOTES          # Allow 'Henry''s Garage' instead of 'Henry'\''s Garage'.
 unsetopt MAIL_WARNING     # Don't print a warning message if a mail file has been accessed.
 
-setopt CORRECT                   # Correct commands.
+# Bash compatibility: commands pasted from docs/scripts are written for bash,
+# and each of these zsh-isms makes valid bash fail or silently differ.
+setopt CLOBBER                   # `>` overwrites and `>>` creates, as in bash (NO_CLOBBER refused both).
+unsetopt NOMATCH                 # Unmatched globs pass through literally: `pip install x[dev]`, URLs with `?`, `HEAD^`.
+unsetopt EQUALS                  # `=word` is plain text, not a command lookup (`echo ===` failed with "not found").
+unsetopt BRACE_CCL               # `{1}` stays literal: BRACE_CCL turned `git show stash@{1}` into `stash@1`.
+unsetopt RC_QUOTES               # `'a''b'` is `ab` as in bash, not `a'b`.
+unsetopt CORRECT                 # No "zsh: correct 'x' to 'y' [nyae]?" prompts.
+setopt INTERACTIVE_COMMENTS      # `cmd  # comment` works at the prompt, as in pasted snippets.
 
 setopt COMPLETE_IN_WORD          # Complete from both ends of a word.
 setopt ALWAYS_TO_END             # Move cursor to the end of a completed word.
@@ -45,11 +51,9 @@ setopt PUSHD_TO_HOME             # Push to home directory when no argument is gi
 setopt CDABLE_VARS               # Change directory to a path stored in a variable.
 setopt AUTO_NAME_DIRS            # Auto add variable-stored paths to ~ list.
 setopt MULTIOS                   # Write to multiple descriptors.
-setopt EXTENDED_GLOB             # Use extended globbing syntax.
-
-if [ -z "${INTELLIJ_ENVIRONMENT_READER:-}" ]; then
-	setopt NO_CLOBBER
-fi
+# EXTENDED_GLOB is deliberately OFF (bash-like): it makes `^`, `#` and `~`
+# glob operators, so `git reset HEAD^` or `curl ...#frag` can misfire. It is
+# enabled only around the compinit check below, whose (#q...) needs it.
 
 unsetopt RM_STAR_SILENT
 
@@ -63,12 +67,14 @@ fpath=(/opt/homebrew/share/zsh/site-functions "$HOME/.local/share/zsh/site-funct
 # bearing: plain compinit does not rewrite a still-valid dump, so without it
 # the mtime never refreshes and every shell takes the slow path forever.
 autoload -Uz compinit
+setopt EXTENDED_GLOB
 if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
   compinit
   touch "${ZDOTDIR:-$HOME}/.zcompdump"
 else
   compinit -C
 fi
+unsetopt EXTENDED_GLOB
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' menu select
@@ -189,7 +195,7 @@ export HERD_PHP_84_INI_SCAN_DIR="$HOME/Library/Application Support/Herd/config/p
 # dcg: warn if hook was silently removed from Claude Code settings
 if command -v dcg &>/dev/null && command -v jq &>/dev/null; then
   if [ -f "$HOME/.claude/settings.json" ] && \
-     ! jq -e '.hooks.PreToolUse[]? | select(.hooks[]?.command | test("dcg$"))' \
+     ! jq -e '.hooks.PreToolUse[]? | select(.hooks[]?.command | test("dcg\"?$"))' \
        "$HOME/.claude/settings.json" &>/dev/null; then
     printf '\033[1;33m[dcg] Hook missing from ~/.claude/settings.json — run: dcg install\033[0m\n'
   fi
@@ -203,11 +209,6 @@ fi
 [[ -o zle && -t 0 ]] && [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && \
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# pnpm
-export PNPM_HOME="/Users/ibrasho/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
-esac
-# pnpm end
-
+# Installers (pnpm, Herd, Vite+) append blocks BELOW this line on
+# install/upgrade. Fold them into the sections above instead: anything sourced
+# after syntax highlighting breaks it. Vite+ (.vite-plus/env) is in .zprofile.
