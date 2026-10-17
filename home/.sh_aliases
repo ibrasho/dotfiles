@@ -94,9 +94,12 @@ alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; rm -rf $HOME/.Trash"
 if [ -n "$ZSH_VERSION" ]; then
 	alias zshrc="${EDITOR} $HOME/.zshrc"
 	alias reload="source $HOME/.zshrc && echo 'Shell config reloaded from $HOME/.zshrc'"
+	alias localrc="if [ -f $HOME/.zsh.local ]; then ${EDITOR} $HOME/.zsh.local; fi"
 elif [ -n "$BASH_VERSION" ]; then
-	alias reload="source $HOME/.bash_profile && echo 'Shell config reloaded from $HOME/.bash_profile'"
+	# exec, not source: re-sourcing .bash_profile re-prepends _nvmrc_hook and
+	# `history -a` to PROMPT_COMMAND, so each reload ran them once more per prompt.
+	alias reload="exec bash -l"
+	# No existence check (unlike zsh's): ~/.bash.local is optional and usually
+	# absent, so the alias would silently do nothing; the editor creates it.
+	alias localrc="${EDITOR} $HOME/.bash.local"
 fi
-
-# zsh.local config
-alias localrc="if [ -f $HOME/.zsh.local ]; then ${EDITOR} $HOME/.zsh.local; fi"
