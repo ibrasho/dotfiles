@@ -1,91 +1,31 @@
-#  ---------------------------------------------------------------------------
-#
-#  Description:  This file holds all my BASH configurations and aliases
-#
-#  Sections:
-#  1.   Environment Configuration
-#  2.   Make Terminal Better (remapping defaults and adding functionality)
-#  3.   File and Folder Management
-#  4.   Searching
-#  5.   Process Management
-#  6.   Networking
-#  7.   System Operations & Information
-#  8.   Web Development
-#  9.   Reminders & Notes
-#
-#  ---------------------------------------------------------------------------
+# Bash login shell (every new Terminal/iTerm tab on macOS is a login shell).
+# Mirrors .zprofile: PATH prepends live here because /etc/profile runs
+# path_helper BEFORE this file and would demote anything set earlier.
+# Interactive config lives in .bashrc, sourced at the bottom.
 
-BREW_PREFIX="/opt/homebrew"
-[ -d "$BREW_PREFIX" ] || BREW_PREFIX="/usr/local"
-# bash-completion@2 installs to share/bash-completion (v1 used etc/bash_completion)
-if [ -f "$BREW_PREFIX/etc/profile.d/bash_completion.sh" ]; then
-  . "$BREW_PREFIX/etc/profile.d/bash_completion.sh"
-elif [ -f "$BREW_PREFIX/etc/bash_completion" ]; then
-  . "$BREW_PREFIX/etc/bash_completion"
+# Homebrew
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# Git branch in prompt.
+# Rust/Cargo
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
-parse_git_branch() {
-  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-}
+# Vite+ bin (https://viteplus.dev)
+[ -f "$HOME/.vite-plus/env" ] && . "$HOME/.vite-plus/env"
 
-#   -------------------------------
-#   1.  ENVIRONMENT CONFIGURATION
-#   -------------------------------
+# JetBrains Toolbox scripts
+PATH="$PATH:$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 
-#   Change Prompt
-#   ------------------------------------------------------------
+export PATH
 
-
-#  export PS1="\n________________________________________________________________________________\n$BLUEBOLD\$(parse_git_branch) $RED\w $PURPLE@ $GREEN\h $GREENBOLD(\u) $RESETCOLOR=> $WHITE"
-
-
-# Load the shell dotfiles, and then some:
-
-source "$HOME/.profile"
-source "$HOME/.bash_prompt"
-
-# EDITOR is set to vim in .sh_exports (sourced via .profile above)
-
-#   Set default blocksize for ls, df, du
-#   from this: http://hints.macworld.com/comment.php?mode=view&cid=24491
-#   ------------------------------------------------------------
-  export BLOCKSIZE=1k
-
-#   Add color to terminal
-#   (this is all commented out as I use Mac Terminal Profiles)
-#   from http://osxdaily.com/2012/02/21/add-color-to-the-terminal-in-mac-os-x/
-#   ------------------------------------------------------------
-  export CLICOLOR=1
-  export LSCOLORS=GxFxCxDxBxegedabagaced
-
-
-
-# >>> mamba initialize >>>
-# !! Contents within this block are managed by 'mamba init' !!
-export MAMBA_EXE="$HOME/.micromamba/bin/micromamba";
-export MAMBA_ROOT_PREFIX="$HOME/micromamba";
-if __mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"; then
-    eval "$__mamba_setup"
+# Login shells don't read .bashrc on their own. Non-interactive login shells
+# (`bash -lc ...`) still need the shared PATH/exports, but not the prompt and
+# completion setup, so they get .profile only.
+if [[ $- == *i* ]]; then
+  [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 else
-    alias micromamba="$MAMBA_EXE"  # Fallback on help from mamba activate
+  [ -f "$HOME/.profile" ] && . "$HOME/.profile"
 fi
-unset __mamba_setup
-# <<< mamba initialize <<<
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-if __conda_setup="$("$HOME/micromamba/bin/conda" 'shell.bash' 'hook' 2> /dev/null)"; then
-    eval "$__conda_setup"
-else
-    if [ -f "$HOME/micromamba/etc/profile.d/conda.sh" ]; then
-        . "$HOME/micromamba/etc/profile.d/conda.sh"
-    else
-        export PATH="$HOME/micromamba/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-# .local/bin/env and .cargo/env are already sourced (guarded) by .profile
