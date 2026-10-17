@@ -2,9 +2,17 @@
 # bash subshells, which would then rewrite zsh's history file in bash format
 # (no timestamps, clobbering shared history). Shell history vars are
 # per-shell state, not environment.
-HISTFILE=$HOME/.zsh_history
+# Separate files per shell: the formats are incompatible (zsh writes
+# ":start:elapsed;cmd"), so a shared file gets mangled by whichever writes last.
+if [ -n "$ZSH_VERSION" ]; then
+  HISTFILE=$HOME/.zsh_history
+else
+  HISTFILE=$HOME/.bash_history
+fi
 HISTSIZE=1000000
-SAVEHIST=1000000
+# shellcheck disable=SC2034  # read by zsh, not referenced here
+SAVEHIST=1000000       # zsh
+HISTFILESIZE=1000000   # bash
 
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
